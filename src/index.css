@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-blue: #2563eb;
+  --color-brand-dark: #0f172a;
+
+  /* Energetic Light Theme */
+  --color-vibe-bg: #f8fafc;
+  --color-vibe-card: #ffffff;
+  --color-vibe-text: #0f172a;
+  --color-vibe-accent: #2563eb;
+  --color-vibe-glow: rgba(37, 99, 235, 0.1);
+
+  /* Relaxed Dark Theme overrides will be handled via .dark class */
+}
+
+.dark {
+  --color-vibe-bg: #020617;
+  --color-vibe-card: #0f172a;
+  --color-vibe-text: #f1f5f9;
+  --color-vibe-accent: #818cf8;
+  --color-vibe-glow: rgba(129, 140, 248, 0.05);
+}
+
+
+@layer base {
+  body {
+    @apply font-sans antialiased bg-slate-50 text-brand-dark;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight font-semibold;
+  }
+}
+

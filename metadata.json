@@ -1,0 +1,6 @@
+{
+  "name": "MakanMana AI",
+  "description": "Asisten pengambil keputusan kuliner yang tegas, logis, dan solutif untuk mengakhiri keraguan memilih tempat makan.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": []
+}
