@@ -538,8 +538,8 @@ export default function MakanManaUI() {
                     className="mb-8 rotate-[-2deg] bg-[#FFD93D] cartoon-border p-4 cartoon-shadow-sm rounded-3xl"
                   >
                     <div className="flex items-center gap-2">
-                       <Sparkles size={20} className="text-[#2D2727]" />
-                       <span className="text-sm font-heading uppercase tracking-widest text-[#2D2727]">AI-Powered Ideas!</span>
+                       <Sparkles size={20} className="text-[var(--text-main)]" />
+                       <span className="text-sm font-heading uppercase tracking-widest text-[var(--text-main)]">AI-Powered Ideas!</span>
                     </div>
                   </motion.div>
 
@@ -589,7 +589,7 @@ export default function MakanManaUI() {
                         className="group relative p-8 rounded-3xl cartoon-border cartoon-shadow transition-all hover:scale-105 active:scale-95 flex flex-col items-center gap-6"
                         style={{ backgroundColor: cat.color }}
                       >
-                        <div className="w-16 h-16 bg-white dark:bg-[#333333] cartoon-border rounded-2xl flex items-center justify-center text-[#2D2727] dark:text-white group-hover:rotate-12 transition-transform">
+                        <div className="w-16 h-16 bg-white dark:bg-[#333333] cartoon-border rounded-2xl flex items-center justify-center text-[var(--text-main)] dark:text-white group-hover:rotate-12 transition-transform">
                           <cat.icon size={32} />
                         </div>
                         <span className="text-lg font-heading text-white uppercase text-pop">{cat.label}</span>
@@ -670,7 +670,7 @@ export default function MakanManaUI() {
                         {options.length > 5 && (
                           <button 
                             onClick={() => setIsModalOpen(true)}
-                            className="flex items-center gap-2 px-6 py-3 bg-[#FFD93D] cartoon-border rounded-2xl text-sm font-heading cartoon-shadow-sm hover:scale-105 transition-transform font-bold text-[#2D2727]"
+                            className="flex items-center gap-2 px-6 py-3 bg-[#FFD93D] cartoon-border rounded-2xl text-sm font-heading cartoon-shadow-sm hover:scale-105 transition-transform font-bold text-[#2D2727] dark:text-[#2D2727]"
                           >
                             <Plus size={18} /> LIHAT SEMUA ({options.length})
                           </button>
@@ -804,12 +804,12 @@ export default function MakanManaUI() {
                         <div className="bg-[#EF4444] cartoon-border px-6 py-2 rounded-2xl cartoon-shadow-sm inline-block mb-4 rotate-[1deg]">
                            <span className="text-[10px] font-heading uppercase text-white tracking-widest">HASIL ANALISIS AI</span>
                         </div>
-                        <h2 className="text-5xl md:text-7xl lg:text-8xl font-heading text-[#2D2727] uppercase text-pop leading-none mt-2">
+                        <h2 className="text-5xl md:text-7xl lg:text-8xl font-heading text-[var(--text-main)] uppercase text-pop leading-none mt-2">
                           {result.name}
                         </h2>
                         
                         <div className="mt-8 max-w-2xl mx-auto">
-                          <p className="text-xl md:text-3xl text-[#2D2727] font-display mb-8 italic">
+                          <p className="text-xl md:text-3xl text-[var(--text-main)] font-display mb-8 italic">
                             "{result.reason}"
                           </p>
                         </div>
