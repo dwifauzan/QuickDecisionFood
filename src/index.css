@@ -34,9 +34,9 @@
   --feature-healthy: #6BCB77;
   --feature-insta: #9D76C1;
   --feature-fast: #FF4E50;
-  --feature-healthy-bg: rgba(107, 203, 119, 0.1);
-  --feature-insta-bg: rgba(157, 118, 193, 0.1);
-  --feature-fast-bg: rgba(255, 78, 80, 0.1);
+  --feature-healthy-bg: #DCFCE7;
+  --feature-insta-bg: #F3E8FF;
+  --feature-fast-bg: #FEE2E2;
 }
 
 .dark {
@@ -51,9 +51,9 @@
   --feature-healthy: #00FF99;
   --feature-insta: #BF95FF;
   --feature-fast: #FF7070;
-  --feature-healthy-bg: rgba(0, 255, 153, 0.1);
-  --feature-insta-bg: rgba(191, 149, 255, 0.1);
-  --feature-fast-bg: rgba(255, 112, 112, 0.1);
+  --feature-healthy-bg: #064E3B;
+  --feature-insta-bg: #4C1D95;
+  --feature-fast-bg: #7F1D1D;
 }
 
 @layer base {
@@ -104,7 +104,7 @@
     border-style: solid;
     box-shadow: 8px 8px 0px 0px var(--border-color);
     padding: 1.5rem;
-    border-radius: 2rem;
+    border-radius: 3rem;
     transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
   }
 
@@ -113,11 +113,11 @@
     border-color: var(--border-color);
     border-style: solid;
     box-shadow: 4px 4px 0px 0px var(--border-color);
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    border-radius: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-radius: 2rem;
     font-family: var(--font-heading);
     text-transform: uppercase;
     letter-spacing: 0.15em;
