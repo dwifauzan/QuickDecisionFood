@@ -79,7 +79,7 @@ function WinnerMap({ winnerName, userLocation }: { winnerName: string, userLocat
   }, [placesLib, map, winnerName, userLocation]);
 
   return (
-    <div className="w-full h-80 rounded-3xl border border-[var(--border-color)] mt-6 relative bg-[var(--card-bg)] overflow-hidden group shadow-inner">
+    <div className="w-full h-full relative group">
       <Map
         defaultCenter={userLocation || { lat: -6.2, lng: 106.8 }}
         defaultZoom={13}
@@ -287,6 +287,7 @@ export default function MakanManaUI() {
   const [isHealthyMode, setIsHealthyMode] = useState(false);
   const [isFastMode, setIsFastMode] = useState(false);
   const [isInstaMode, setIsInstaMode] = useState(false);
+  const [isOptimizationEnabled, setIsOptimizationEnabled] = useState(true);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -336,9 +337,9 @@ export default function MakanManaUI() {
     setStep('RESULT'); // Go to result immediately to show loading there
     
     try {
-      const healthyContext = isHealthyMode ? "\nCATATAN: Berikan tips Healthy Switch." : "\nCATATAN: Abaikan Healthy_Switch.";
-      const fastContext = isFastMode ? "\nURGENSI: Sangat Tinggi." : "\nURGENSI: Normal.";
-      const instaContext = isInstaMode ? "\nAESTHETIC MODE: Aktif." : "\nAESTHETIC MODE: Mati.";
+      const healthyContext = isOptimizationEnabled ? (isHealthyMode ? "\nCATATAN: Berikan tips Healthy Switch." : "\nCATATAN: Berikan tips modifikasi sehat umum.") : "\nCATATAN: Abaikan Healthy_Switch.";
+      const fastContext = isOptimizationEnabled ? (isFastMode ? "\nURGENSI: Sangat Tinggi." : "\nURGENSI: Berikan estimasi kecepatan.") : "\nURGENSI: Abaikan.";
+      const instaContext = isOptimizationEnabled ? (isInstaMode ? "\nAESTHETIC MODE: Aktif." : "\nAESTHETIC MODE: Berikan tips visual umum.") : "\nAESTHETIC MODE: Mati.";
       const prompt = `Pencarian Langsung: ${finalQuery}\n${budget ? `Budget: Rp ${budget}` : ''}\nSuhu: ${temperature}°C\nWeather: ${weather}\nKATEGORI: KEDUANYA${healthyContext}${fastContext}${instaContext}`;
       
       const response = await ai.models.generateContent({
@@ -399,9 +400,9 @@ export default function MakanManaUI() {
     setError('');
     
     try {
-      const healthyContext = isHealthyMode ? "\nCATATAN: Berikan tips Healthy Switch." : "\nCATATAN: Abaikan Healthy_Switch.";
-      const fastContext = isFastMode ? "\nURGENSI: Sangat Tinggi." : "\nURGENSI: Normal.";
-      const instaContext = isInstaMode ? "\nAESTHETIC MODE: Aktif." : "\nAESTHETIC MODE: Mati.";
+      const healthyContext = isOptimizationEnabled ? (isHealthyMode ? "\nCATATAN: Berikan tips Healthy Switch." : "\nCATATAN: Berikan tips modifikasi sehat umum.") : "\nCATATAN: Abaikan Healthy_Switch.";
+      const fastContext = isOptimizationEnabled ? (isFastMode ? "\nURGENSI: Sangat Tinggi." : "\nURGENSI: Berikan estimasi kecepatan.") : "\nURGENSI: Abaikan.";
+      const instaContext = isOptimizationEnabled ? (isInstaMode ? "\nAESTHETIC MODE: Aktif." : "\nAESTHETIC MODE: Berikan tips visual umum.") : "\nAESTHETIC MODE: Mati.";
       const prompt = `Pilihan: ${options.join(', ')}\n${budget ? `Budget: Rp ${budget}` : ''}\n${context ? `Konteks: ${context}` : ''}\nSuhu: ${temperature}°C\nWeather: ${weather}\nKATEGORI: ${category || 'KEDUANYA'}${healthyContext}${fastContext}${instaContext}`;
       
       const response = await ai.models.generateContent({
@@ -592,7 +593,7 @@ export default function MakanManaUI() {
                         <div className="w-16 h-16 bg-white dark:bg-[#333333] cartoon-border rounded-2xl flex items-center justify-center text-[var(--text-main)] dark:text-white group-hover:rotate-12 transition-transform">
                           <cat.icon size={32} />
                         </div>
-                        <span className="text-lg font-heading text-white uppercase text-pop">{cat.label}</span>
+                        <span className="text-lg font-heading text-[var(--text-main)] uppercase text-pop">{cat.label}</span>
                       </button>
                     ))}
                   </div>
@@ -628,8 +629,8 @@ export default function MakanManaUI() {
                         />
                       </div>
 
-                      <div className="space-y-4">
-                        <label className="text-sm font-heading uppercase ml-2 text-[var(--text-main)]">Tulis Menu / Tempat:</label>
+                      <div className="space-y-6">
+                        <label className="text-sm font-heading uppercase ml-2 text-[var(--text-main)] block mb-2">Tulis Menu / Tempat:</label>
                         <div className="flex gap-4 p-3 bg-[var(--card-bg)] cartoon-border rounded-2xl cartoon-shadow-sm">
                           <input
                             type="text"
@@ -685,16 +686,16 @@ export default function MakanManaUI() {
                         )}
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 bg-[#FFD93D]/20 p-6 rounded-3xl border-4 border-[var(--border-color)] cartoon-shadow-sm">
-                        <div className="space-y-3">
-                          <label className="text-xs font-heading uppercase ml-1 text-[var(--text-main)]">Berapa Duit?</label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 p-6 rounded-3xl border-4 border-[var(--border-color)] cartoon-shadow-sm transition-colors duration-500" style={{ backgroundColor: 'var(--accent-soft)' }}>
+                        <div className="space-y-4">
+                          <label className="text-xs font-heading uppercase ml-1 text-[var(--text-main)] block mb-1">Berapa Duit?</label>
                           <div className="flex items-center gap-4 bg-[var(--card-bg)] cartoon-border p-4 rounded-2xl cartoon-shadow-sm">
                             <Wallet size={24} className="text-[var(--text-main)]" />
                             <input type="text" value={budget} onChange={handleBudgetChange} placeholder="No Limit" className="bg-transparent outline-none font-display text-xl w-full" />
                           </div>
                         </div>
-                        <div className="space-y-3">
-                          <label className="text-xs font-heading uppercase ml-1 text-[var(--text-main)]">Ada Vibe Khusus?</label>
+                        <div className="space-y-4">
+                          <label className="text-xs font-heading uppercase ml-1 text-[var(--text-main)] block mb-1">Ada Vibe Khusus?</label>
                           <div className="flex items-center gap-4 bg-[var(--card-bg)] cartoon-border p-4 rounded-2xl cartoon-shadow-sm">
                             <Wind size={24} className="text-[var(--text-main)]" />
                             <input type="text" value={context} onChange={(e) => setContext(e.target.value)} placeholder="Pedas, Santai..." className="bg-transparent outline-none font-display text-xl w-full" />
@@ -703,34 +704,47 @@ export default function MakanManaUI() {
                       </div>
 
                       {/* FEATURE TOGGLES */}
-                        <div className="mt-10 space-y-4">
+                        <div className="mt-10 space-y-6">
                         <div className="flex items-center justify-between px-2">
-                          <label className="text-xs font-heading uppercase text-[var(--text-main)]">Optimization</label>
-                          <button 
-                            onClick={() => { setIsHealthyMode(false); setIsFastMode(false); setIsInstaMode(false); }}
-                            className="text-[10px] font-heading text-red-500 hover:scale-110 transition-transform"
-                          >
-                            RESET
-                          </button>
+                          <label className="text-xs font-heading uppercase text-[var(--text-main)] block mb-2">Optimization Engine</label>
+                          <div className="flex items-center bg-[var(--card-bg)] cartoon-border-sm rounded-full p-1 cartoon-shadow-sm">
+                            <button 
+                              onClick={() => setIsOptimizationEnabled(true)}
+                              className={`px-4 py-1 rounded-full text-[10px] font-heading transition-all ${isOptimizationEnabled ? 'bg-brand-blue text-white' : 'text-[var(--text-main)]/40 hover:text-[var(--text-main)]'}`}
+                            >
+                              ON
+                            </button>
+                            <button 
+                              onClick={() => {
+                                setIsOptimizationEnabled(false);
+                                setIsHealthyMode(false);
+                                setIsFastMode(false);
+                                setIsInstaMode(false);
+                              }}
+                              className={`px-4 py-1 rounded-full text-[10px] font-heading transition-all ${!isOptimizationEnabled ? 'bg-red-500 text-white' : 'text-[var(--text-main)]/40 hover:text-[var(--text-main)]'}`}
+                            >
+                              OFF
+                            </button>
+                          </div>
                         </div>
                         
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 transition-all duration-500 ${!isOptimizationEnabled ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
                           {[
-                            { id: 'insta', active: isInstaMode, set: setIsInstaMode, icon: Camera, label: 'Visual', color: '#9D76C1' },
-                            { id: 'healthy', active: isHealthyMode, set: setIsHealthyMode, icon: Heart, label: 'Healthy', color: '#6BCB77' },
-                            { id: 'fast', active: isFastMode, set: setIsFastMode, icon: Sparkles, label: 'Fastfood', color: '#FF4E50' }
+                            { id: 'insta', active: isInstaMode, set: setIsInstaMode, icon: Camera, label: 'Visual', color: 'var(--feature-insta)', bg: 'var(--feature-insta-bg)' },
+                            { id: 'healthy', active: isHealthyMode, set: setIsHealthyMode, icon: Heart, label: 'Healthy', color: 'var(--feature-healthy)', bg: 'var(--feature-healthy-bg)' },
+                            { id: 'fast', active: isFastMode, set: setIsFastMode, icon: Sparkles, label: 'Fastfood', color: 'var(--feature-fast)', bg: 'var(--feature-fast-bg)' }
                           ].map((feat) => (
                             <button 
                               key={feat.id}
-                              onClick={() => feat.set(!feat.active)}
-                              className={`flex items-center justify-between p-4 cartoon-border rounded-2xl transition-all ${feat.active ? 'bg-[var(--card-bg)] cartoon-shadow-sm scale-105' : 'bg-[var(--bg-color)] opacity-50'}`}
-                              style={feat.active ? { borderColor: feat.color, color: feat.color } : {}}
+                              onClick={() => isOptimizationEnabled && feat.set(!feat.active)}
+                              className={`flex items-center justify-between p-4 cartoon-border rounded-2xl transition-all ${feat.active && isOptimizationEnabled ? 'cartoon-shadow-sm scale-105' : 'bg-[var(--bg-color)] opacity-50'}`}
+                              style={feat.active && isOptimizationEnabled ? { borderColor: feat.color, color: feat.color, backgroundColor: feat.bg } : {}}
                             >
                               <div className="flex items-center gap-3">
                                 <feat.icon size={20} />
                                 <span className="font-heading text-sm uppercase">{feat.label}</span>
                               </div>
-                              <div className={`w-3 h-3 rounded-full cartoon-border ${feat.active ? 'bg-current' : 'bg-transparent'}`} />
+                              <div className={`w-3 h-3 rounded-full cartoon-border ${feat.active && isOptimizationEnabled ? 'bg-current' : 'bg-transparent'}`} />
                             </button>
                           ))}
                         </div>
@@ -818,7 +832,7 @@ export default function MakanManaUI() {
                           {result.tags.map((tag, i) => (
                             <span 
                               key={i} 
-                              className="px-6 py-2 bg-[#FF8400] text-white cartoon-border rounded-full text-xs font-heading uppercase text-pop"
+                              className="px-6 py-2 bg-[#FF8400] text-white cartoon-border rounded-full text-xs font-heading uppercase"
                             >
                               {tag}
                             </span>
@@ -826,35 +840,37 @@ export default function MakanManaUI() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-10">
-                        {result.urgencyStatus && (
-                          <div className="cartoon-card !p-6 bg-[var(--card-bg)] flex flex-col items-center transition-colors duration-500">
-                            <div className="w-12 h-12 bg-[#FFD93D] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
-                              <Loader2 size={24} className="text-[var(--text-main)]" />
+                      {isOptimizationEnabled && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-10">
+                          {result.urgencyStatus && (
+                            <div className="cartoon-card !p-6 bg-[var(--card-bg)] flex flex-col items-center transition-colors duration-500">
+                              <div className="w-12 h-12 bg-[#FFD93D] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
+                                <Loader2 size={24} className="text-[var(--text-main)]" />
+                              </div>
+                              <h5 className="text-[9px] font-heading text-[var(--text-main)] mb-2 uppercase">Tempo</h5>
+                              <p className="text-sm font-heading text-[var(--text-main)]">{result.urgencyStatus}</p>
                             </div>
-                            <h5 className="text-[9px] font-heading text-[var(--text-main)] mb-2 uppercase">Tempo</h5>
-                            <p className="text-sm font-heading text-[var(--text-main)]">{result.urgencyStatus}</p>
-                          </div>
-                        )}
-                        {result.healthySwitch && (
-                          <div className="cartoon-card !p-6 bg-[#6BCB77] flex flex-col items-center">
-                            <div className="w-12 h-12 bg-[var(--card-bg)] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
-                              <Heart size={24} className="text-[#6BCB77]" />
+                          )}
+                          {result.healthySwitch && (
+                            <div className="cartoon-card !p-6 flex flex-col items-center transition-all duration-500" style={{ backgroundColor: 'var(--feature-healthy-bg)', borderColor: 'var(--feature-healthy)' }}>
+                              <div className="w-12 h-12 bg-[var(--card-bg)] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
+                                <Heart size={24} style={{ color: 'var(--feature-healthy)' }} />
+                              </div>
+                              <h5 className="text-[9px] font-heading text-[var(--text-main)] mb-2 uppercase opacity-60">Wellness</h5>
+                              <p className="text-xs font-display text-[var(--text-main)] italic">"{result.healthySwitch}"</p>
                             </div>
-                            <h5 className="text-[9px] font-heading text-white mb-2 uppercase">Wellness</h5>
-                            <p className="text-xs font-display text-white italic">"{result.healthySwitch}"</p>
-                          </div>
-                        )}
-                        {result.instaVibe && (
-                          <div className="cartoon-card !p-6 bg-[#9D76C1] flex flex-col items-center">
-                            <div className="w-12 h-12 bg-[var(--card-bg)] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
-                              <Camera size={24} className="text-[#9D76C1]" />
+                          )}
+                          {result.instaVibe && (
+                            <div className="cartoon-card !p-6 flex flex-col items-center transition-all duration-500" style={{ backgroundColor: 'var(--feature-insta-bg)', borderColor: 'var(--feature-insta)' }}>
+                              <div className="w-12 h-12 bg-[var(--card-bg)] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
+                                <Camera size={24} style={{ color: 'var(--feature-insta)' }} />
+                              </div>
+                              <h5 className="text-[9px] font-heading text-[var(--text-main)] mb-2 uppercase opacity-60">Aesthetic</h5>
+                              <p className="text-xs font-display text-[var(--text-main)] italic">"{result.instaVibe}"</p>
                             </div>
-                            <h5 className="text-[9px] font-heading text-white mb-2 uppercase">Aesthetic</h5>
-                            <p className="text-xs font-display text-white italic">"{result.instaVibe}"</p>
-                          </div>
-                        )}
-                      </div>
+                          )}
+                        </div>
+                      )}
 
                       <div className="w-full">
                         <div className="flex items-center justify-between mb-4 px-4">

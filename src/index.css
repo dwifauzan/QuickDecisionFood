@@ -28,6 +28,15 @@
   --card-bg: #ffffff;
   --border-color: #2D2727;
   --dot-color: rgba(45, 39, 39, 0.07);
+  --pop-shadow: #ffffff;
+
+  --accent-soft: rgba(255, 217, 61, 0.15);
+  --feature-healthy: #6BCB77;
+  --feature-insta: #9D76C1;
+  --feature-fast: #FF4E50;
+  --feature-healthy-bg: rgba(107, 203, 119, 0.1);
+  --feature-insta-bg: rgba(157, 118, 193, 0.1);
+  --feature-fast-bg: rgba(255, 78, 80, 0.1);
 }
 
 .dark {
@@ -36,6 +45,15 @@
   --card-bg: #1A1A1A;
   --border-color: #333333;
   --dot-color: rgba(255, 255, 255, 0.05);
+  --pop-shadow: #000000;
+
+  --accent-soft: rgba(255, 217, 61, 0.05);
+  --feature-healthy: #00FF99;
+  --feature-insta: #BF95FF;
+  --feature-fast: #FF7070;
+  --feature-healthy-bg: rgba(0, 255, 153, 0.1);
+  --feature-insta-bg: rgba(191, 149, 255, 0.1);
+  --feature-fast-bg: rgba(255, 112, 112, 0.1);
 }
 
 @layer base {
@@ -142,8 +160,12 @@
   }
 
   .text-pop {
-    text-shadow: 3px 3px 0px var(--border-color);
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
     transition: text-shadow 0.5s ease-in-out;
+  }
+
+  .dark .text-pop {
+    text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.1);
   }
 }
 
