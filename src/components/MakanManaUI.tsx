@@ -5,7 +5,7 @@ import {
   Utensils, Wallet, Wind, Sparkles, Plus, X, 
   ChevronRight, Loader2, MapPin, RefreshCcw, 
   Thermometer, CloudRain, Navigation, History,
-  Info, Map as MapIcon, Heart, Camera
+  Info, Map as MapIcon, Heart, Camera, Sun, Moon
 } from 'lucide-react';
 import { APIProvider, useMapsLibrary, Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
 
@@ -90,9 +90,13 @@ function WinnerMap({ winnerName, userLocation }: { winnerName: string, userLocat
       >
         {winnerPlace?.location && (
           <AdvancedMarker position={winnerPlace.location}>
-            <div className="bg-brand-blue text-white px-4 py-2.5 rounded-full font-bold text-sm shadow-2xl flex items-center gap-2 whitespace-nowrap border-2 border-white scale-100 hover:scale-105 transition-transform">
-              <Navigation size={14} className="fill-white" />
-              {winnerPlace.displayName}
+            <div className="bg-brand-blue text-white px-4 py-2.5 rounded-full font-bold text-sm shadow-2xl flex items-center gap-2 max-w-[180px] md:max-w-xs border-2 border-white scale-100 hover:scale-105 transition-transform">
+              <Navigation size={14} className="fill-white shrink-0" />
+              <span className="truncate">
+                {typeof winnerPlace.displayName === 'string' 
+                  ? winnerPlace.displayName 
+                  : (winnerPlace.displayName as any)?.text || (winnerPlace.displayName as any)?.toString()}
+              </span>
             </div>
           </AdvancedMarker>
         )}
@@ -103,9 +107,9 @@ function WinnerMap({ winnerName, userLocation }: { winnerName: string, userLocat
           <div className="bg-brand-blue/10 p-2 rounded-lg">
             <MapPin size={16} className="text-brand-blue" />
           </div>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-slate-400 uppercase text-[9px] tracking-widest font-black">Alamat Lokasi</span>
-            <span className="text-slate-900 leading-snug">{winnerPlace.formattedAddress}</span>
+          <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+            <span className="text-slate-400 uppercase text-[9px] tracking-widest font-black shrink-0">Alamat Lokasi</span>
+            <span className="text-slate-900 leading-snug line-clamp-2 break-words">{winnerPlace.formattedAddress}</span>
           </div>
         </div>
       )}
@@ -139,16 +143,24 @@ function MapsIntegration({ onPlacesFound, onLocationUpdate, category }: {
           if (category === 'MINUMAN_SAJA') includedTypes = ['cafe', 'bar'];
 
           const { places } = await placesLib.Place.searchNearby({
-            fields: ['displayName'],
+            fields: ['displayName', 'id'],
             locationRestriction: { center, radius: 2000 },
             includedPrimaryTypes: includedTypes,
-            maxResultCount: 15
+            maxResultCount: 20
           });
 
           if (places && places.length > 0) {
-            onPlacesFound(places.map(p => p.displayName as string).filter(n => n));
+            const placeNames = places
+              .map(p => {
+                const dn = p.displayName;
+                if (typeof dn === 'string') return dn;
+                return (dn as any)?.text || (dn as any)?.toString() || '';
+              })
+              .filter((n): n is string => Boolean(n));
+            
+            onPlacesFound(placeNames);
           } else {
-            alert('Tidak ditemukan tempat makan di sekitar.');
+            alert('Tidak ditemukan tempat makan atau minum di sekitar lokasi Anda.');
           }
         } catch (err: any) {
           console.error(err);
@@ -179,17 +191,17 @@ function MapsIntegration({ onPlacesFound, onLocationUpdate, category }: {
       <AnimatePresence>
         {apiError === 'NOT_ACTIVATED' && (
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="absolute top-full right-0 mt-3 w-72 bg-white border border-slate-200 rounded-2xl p-5 shadow-2xl z-50 overflow-hidden"
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="absolute top-full left-0 md:right-0 md:left-auto mt-3 w-[calc(100vw-4rem)] md:w-72 bg-white dark:bg-vibe-card border border-vibe-glow rounded-2xl p-6 shadow-2xl z-50 overflow-hidden"
           >
-            <div className="absolute top-0 left-0 w-1 h-full bg-red-500" />
-            <h4 className="text-sm font-bold text-slate-900 mb-2">Places API Belum Aktif</h4>
-            <p className="text-xs text-slate-500 mb-4 leading-relaxed">Fitur ini membutuhkan aktivasi "Places API (New)" di Google Cloud Console.</p>
+            <div className="absolute top-0 left-0 w-1.5 h-full bg-red-500" />
+            <h4 className="text-sm font-black text-vibe-text mb-2 uppercase tracking-tight">Places API Belum Aktif</h4>
+            <p className="text-xs text-slate-500 mb-5 leading-relaxed">Fitur ini membutuhkan aktivasi "Places API (New)" di Google Cloud Console.</p>
             <a 
               href="https://console.developers.google.com/apis/api/places.googleapis.com/overview" 
               target="_blank" rel="noopener"
-              className="block w-full py-2.5 bg-brand-dark text-white text-center text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors"
+              className="block w-full py-3 bg-vibe-accent text-white text-center text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-900 transition-colors shadow-lg shadow-vibe-accent/20"
             >
               Aktifkan Sekarang
             </a>
@@ -200,7 +212,41 @@ function MapsIntegration({ onPlacesFound, onLocationUpdate, category }: {
   );
 }
 
+type Step = 'LANDING' | 'SELECTION' | 'RESULT';
+
+function CinematicBackground({ step, isDark }: { step: Step, isDark: boolean }) {
+  const images = {
+    LANDING: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop",
+    SELECTION: "https://images.unsplash.com/photo-1490818387583-1baba5e638af?q=80&w=2064&auto=format&fit=crop",
+    RESULT: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1974&auto=format&fit=crop"
+  };
+
+  return (
+    <div className="cinematic-bg">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={step}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.5 }}
+          className="absolute inset-0"
+        >
+          <img 
+            src={images[step]} 
+            className="w-full h-full object-cover ken-burns" 
+            alt="background"
+            referrerPolicy="no-referrer"
+          />
+          <div className={`absolute inset-0 bg-gradient-to-b ${isDark ? 'from-black/80 via-black/40 to-black/90' : 'from-black/60 via-black/20 to-black/80'} transition-colors duration-1000`} />
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function MakanManaUI() {
+  const [step, setStep] = useState<Step>('LANDING');
   const [options, setOptions] = useState<string[]>([]);
   const [newOption, setNewOption] = useState('');
   const [budget, setBudget] = useState<string>('');
@@ -223,15 +269,12 @@ export default function MakanManaUI() {
   const [isHealthyMode, setIsHealthyMode] = useState(false);
   const [isFastMode, setIsFastMode] = useState(false);
   const [isInstaMode, setIsInstaMode] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
+    // Automatically use dark mode for cinematic feel
+    document.documentElement.classList.add('dark');
+  }, []);
 
   useEffect(() => {
     if (!userLocation) return;
@@ -256,17 +299,9 @@ export default function MakanManaUI() {
     setOptions(options.filter((_, i) => i !== index));
   };
 
-  const formatBudget = (val: string) => {
-    // Remove non-digit characters
-    const numericValue = val.replace(/\D/g, '');
-    if (!numericValue) return '';
-    // Format with commas
-    return new Intl.NumberFormat('en-US').format(parseInt(numericValue));
-  };
-
   const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatBudget(e.target.value);
-    setBudget(formatted);
+    const val = e.target.value.replace(/\D/g, '');
+    setBudget(val ? new Intl.NumberFormat('en-US').format(parseInt(val)) : '');
   };
 
   const handleDecision = async () => {
@@ -276,13 +311,13 @@ export default function MakanManaUI() {
     }
     setLoading(true);
     setError('');
-    setResult(null);
-
+    
     try {
-      const healthyContext = isHealthyMode ? "\nCATATAN: Berikan tips Healthy Switch yang sangat bermanfaat." : "\nCATATAN: Abaikan Healthy_Switch (Isi dengan 'N/A').";
-      const fastContext = isFastMode ? "\nURGENSI: Sangat Tinggi (Buru-buru). Prioritaskan makanan cepat saji/siap santap." : "\nURGENSI: Normal.";
-      const instaContext = isInstaMode ? "\nAESTHETIC MODE: Aktif. Prioritaskan pilihan yang Instagrammable dan berikan tips fotografi." : "\nAESTHETIC MODE: Mati. Abaikan Insta-Vibe (Isi dengan 'N/A').";
+      const healthyContext = isHealthyMode ? "\nCATATAN: Berikan tips Healthy Switch." : "\nCATATAN: Abaikan Healthy_Switch.";
+      const fastContext = isFastMode ? "\nURGENSI: Sangat Tinggi." : "\nURGENSI: Normal.";
+      const instaContext = isInstaMode ? "\nAESTHETIC MODE: Aktif." : "\nAESTHETIC MODE: Mati.";
       const prompt = `Pilihan: ${options.join(', ')}\n${budget ? `Budget: Rp ${budget}` : ''}\n${context ? `Konteks: ${context}` : ''}\nSuhu: ${temperature}°C\nWeather: ${weather}\nKATEGORI: ${category || 'KEDUANYA'}${healthyContext}${fastContext}${instaContext}`;
+      
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: prompt,
@@ -291,21 +326,14 @@ export default function MakanManaUI() {
 
       const text = response.text || '';
       const cleanText = (t: string) => t.replace(/\*\*|\*|#|__|🏷️|🍃|📸|⏱️/g, '').replace(/\[|\]/g, '').trim();
-      
       const lines = text.split('\n').filter(l => l.trim());
-      let name = '';
-      let reason = '';
-      let tags: string[] = [];
-      let mapsQuery = '';
-      let healthySwitch = '';
-      let instaVibe = '';
-      let urgencyStatus = '';
-
+      
+      let name = '', reason = '', tags: string[] = [], mapsQuery = '', healthySwitch = '', instaVibe = '', urgencyStatus = '';
       let currentSection = '';
+
       lines.forEach(line => {
         const trimmed = line.trim();
         const upper = trimmed.toUpperCase();
-        
         if (upper === '[TITLE]') { currentSection = 'title'; return; }
         if (upper === '[REASON]') { currentSection = 'reason'; return; }
         if (upper === '[DYNAMIC_TAGS]') { currentSection = 'tags'; return; }
@@ -316,33 +344,24 @@ export default function MakanManaUI() {
 
         if (currentSection === 'title') name = (name + ' ' + trimmed).trim();
         else if (currentSection === 'reason') reason = (reason + ' ' + trimmed).trim();
-        else if (currentSection === 'tags') {
-          const parts = trimmed.split('|').map(p => cleanText(p)).filter(p => p);
-          tags.push(...parts);
-        }
+        else if (currentSection === 'tags') tags.push(...trimmed.split('|').map(p => cleanText(p)).filter(p => p));
         else if (currentSection === 'healthy') healthySwitch = (healthySwitch + ' ' + cleanText(trimmed)).trim();
         else if (currentSection === 'insta') instaVibe = (instaVibe + ' ' + cleanText(trimmed)).trim();
         else if (currentSection === 'urgency') urgencyStatus = (urgencyStatus + ' ' + cleanText(trimmed)).trim();
         else if (currentSection === 'maps') mapsQuery = (mapsQuery + ' ' + cleanText(trimmed)).trim();
       });
 
-      // Fallbacks if parsing missed something
-      if (!name && lines.length > 0) name = cleanText(lines[0]);
-      if (!reason) reason = 'Pilihan terbaik untukmu saat ini.';
-      if (tags.length === 0) tags = ['Cepat & Nikmat', 'Hemat', 'Pilihan AI'];
-      if (!mapsQuery) mapsQuery = name;
-
       setResult({ 
         name: cleanText(name), 
         reason: reason.replace(/^"|"$/g, ''), 
-        tags, 
-        mapsQuery, 
+        tags, mapsQuery, 
         healthySwitch: healthySwitch && healthySwitch.toLowerCase() !== 'n/a' ? healthySwitch : undefined, 
         instaVibe: instaVibe && instaVibe.toLowerCase() !== 'n/a' ? instaVibe : undefined,
         urgencyStatus
       });
+      setStep('RESULT');
     } catch (err) {
-      setError('Koneksi AI terhenti. Coba sebentar lagi.');
+      setError('Gagal memproses keputusan. Coba lagi.');
     } finally {
       setLoading(false);
     }
@@ -350,7 +369,6 @@ export default function MakanManaUI() {
 
   const selectQuickstartCategory = (cat: 'MAKANAN_SAJA' | 'MINUMAN_SAJA' | 'KEDUANYA') => {
     setCategory(cat);
-    setResult(null);
     if (cat === 'MAKANAN_SAJA') setOptions(['Nasi Padang', 'Mie Ayam', 'Bakso', 'Sate Ayam', 'Ayam Bakar']);
     else if (cat === 'MINUMAN_SAJA') setOptions(['Es Teh Manis', 'Es Jeruk', 'Kopi Susu', 'Jus Alpukat', 'Soda Gembira']);
     else setOptions(['Nasi Goreng + Es Teh', 'Ayam Penyet + Es Jeruk', 'Burger + Cola', 'Mie Instan + Susu', 'Sate + Jus Alpukat']);
@@ -358,646 +376,373 @@ export default function MakanManaUI() {
 
   if (!hasValidMapsKey) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-        <div className="bg-white border border-slate-200 p-10 rounded-[2.5rem] max-w-md shadow-2xl shadow-slate-200/50">
-          <div className="bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
-            <MapIcon className="text-brand-blue" size={32} />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-4 leading-tight">Konfigurasi Maps Diperlukan</h2>
-          <p className="text-slate-500 mb-8 leading-relaxed">Aplikasi membutuhkan Google Maps API Key untuk fitur deteksi lokasi dan peta.</p>
-          <div className="space-y-3">
-            <div className="p-4 bg-slate-50 rounded-xl flex items-start gap-3">
-              <div className="w-5 h-5 bg-slate-900 text-white rounded-full flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</div>
-              <p className="text-sm font-medium">Buka <strong>Secrets</strong> di Settings AI Studio</p>
-            </div>
-            <div className="p-4 bg-slate-50 rounded-xl flex items-start gap-3">
-              <div className="w-5 h-5 bg-slate-900 text-white rounded-full flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</div>
-              <p className="text-sm font-medium">Tambah <code>GOOGLE_MAPS_PLATFORM_KEY</code></p>
-            </div>
-          </div>
+      <div className="min-h-screen bg-black flex items-center justify-center p-6 text-white">
+        <div className="glass-card p-10 rounded-[2.5rem] max-w-md w-full text-center">
+          <MapIcon className="text-brand-blue mx-auto mb-6" size={48} />
+          <h2 className="text-3xl font-black mb-4">Konfigurasi Maps</h2>
+          <p className="text-white/60 mb-8">Tambah <code>GOOGLE_MAPS_PLATFORM_KEY</code> ke Secrets.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <APIProvider apiKey={GOOGLE_MAPS_KEY} version="weekly">
-      <div className="min-h-screen bg-vibe-bg text-vibe-text relative overflow-x-hidden transition-colors duration-700 flex flex-col items-center py-10 md:py-20 px-4 md:px-6">
-        
-        {/* Background Decorative Elements */}
-        <div className="absolute top-0 left-0 w-full h-[1200px] pointer-events-none opacity-40 overflow-hidden">
-           {theme === 'light' ? (
-             <>
-               <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-brand-blue/30 to-orange-400/20 blur-[140px] animate-pulse" />
-               <div className="absolute top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-bl from-orange-500/20 to-brand-blue/30 blur-[120px]" />
-             </>
-           ) : (
-             <>
-               <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-indigo-900/40 to-purple-900/20 blur-[160px]" />
-               <div className="absolute top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-bl from-indigo-800/30 to-slate-900/40 blur-[140px] animate-pulse" />
-             </>
-           )}
-        </div>
-        
-        {/* Navigation Bar / Branding */}
-        <div className="w-full max-w-4xl flex justify-between items-center mb-16 z-50 sticky top-4 bg-vibe-card/60 backdrop-blur-xl border border-white/10 dark:border-white/5 p-4 md:p-6 rounded-[2rem] shadow-xl shadow-vibe-glow/20 transition-all duration-700">
-          <div className="flex items-center gap-3">
-             <div className="bg-vibe-accent/10 p-2.5 rounded-xl">
-               <Utensils className="text-vibe-accent" size={24} />
-             </div>
-             <h1 className="text-xl font-black tracking-tighter text-vibe-text">MakanMana AI</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            {/* Theme Toggle */}
-            <button 
-              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-              className="w-12 h-12 flex items-center justify-center rounded-2xl bg-vibe-bg border border-vibe-glow hover:border-vibe-accent transition-all duration-500 group"
-              title={theme === 'light' ? 'Switch to Relaxed Night Mode' : 'Switch to Energetic Light Mode'}
-            >
-              <div className="relative w-6 h-6">
-                <motion.div
-                  animate={{ 
-                    rotate: theme === 'light' ? 0 : 180,
-                    scale: theme === 'light' ? 1 : 0,
-                    opacity: theme === 'light' ? 1 : 0 
-                  }}
-                  className="absolute inset-0 text-orange-500"
-                >
-                  <RefreshCcw size={24} className="animate-spin-slow" />
-                </motion.div>
-                <motion.div
-                  animate={{ 
-                    rotate: theme === 'dark' ? 0 : -180,
-                    scale: theme === 'dark' ? 1 : 0,
-                    opacity: theme === 'dark' ? 1 : 0 
-                  }}
-                  className="absolute inset-0 text-indigo-400"
-                >
-                  <CloudRain size={24} />
-                </motion.div>
+    <APIProvider apiKey={GOOGLE_MAPS_KEY}>
+      <div className="relative min-h-screen w-full overflow-x-hidden font-sans text-white bg-black selection:bg-brand-blue">
+        <CinematicBackground step={step} isDark={theme === 'dark'} />
+
+        {/* OVERLAY CONTENT */}
+        <div className="relative z-10 flex flex-col min-h-screen">
+          
+          {/* TOP NAV */}
+          <nav className="h-20 px-6 md:px-12 flex items-center justify-between pointer-events-auto">
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => setStep('LANDING')}>
+              <div className="w-10 h-10 bg-brand-blue rounded-xl flex items-center justify-center shadow-lg shadow-brand-blue/30">
+                <Utensils size={20} />
               </div>
-            </button>
-
-            <div className="w-px h-8 bg-vibe-glow mx-1" />
-
-            {category && (
-              <button 
-                onClick={() => { setCategory(null); setOptions([]); setResult(null); }}
-                className="bg-vibe-accent text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 transition-colors flex items-center gap-2"
-              >
-                <X size={14} /> Kembali
-              </button>
-            )}
-            {userLocation ? (
-              <div className="hidden md:flex items-center gap-4 bg-vibe-card/40 border border-vibe-glow px-5 py-2.5 rounded-full transition-colors duration-700">
-                <div className="flex items-center gap-2 text-vibe-text transition-colors duration-700">
-                  <Thermometer size={16} className="text-orange-500" />
-                  <span className="font-bold text-sm tracking-tighter">{temperature}°C</span>
-                </div>
-                <div className="w-px h-3 bg-vibe-glow transition-colors duration-700" />
-                <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider dark:text-slate-400">
-                  <CloudRain size={16} className="text-vibe-accent" />
-                  {weather}
-                </div>
-              </div>
-            ) : (
-              <div className="bg-vibe-card/50 text-slate-400 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse border border-vibe-glow">Menunggu GPS...</div>
-            )}
-          </div>
-        </div>
-
-        {/* Home Hero Section */}
-        {!category && options.length === 0 && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-6xl text-center mb-24 px-4 relative"
-          >
-            <motion.div 
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="inline-flex items-center gap-3 bg-vibe-accent/10 text-vibe-accent px-5 py-2.5 rounded-full text-[11px] font-black uppercase tracking-[0.25em] mb-10 border border-vibe-accent/20 backdrop-blur-sm shadow-xl shadow-vibe-accent/5"
-            >
-              <Sparkles size={14} className="fill-vibe-accent animate-pulse" /> 
-              <span>State-of-the-art AI Advisor</span>
-            </motion.div>
-            
-            <div className="relative">
-              <motion.h1 
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="text-7xl md:text-[10rem] font-black tracking-[-0.07em] text-vibe-text leading-[0.82] mb-12"
-              >
-                Laper, Tapi <br /> 
-                <span className="text-vibe-accent italic font-black relative inline-block">
-                  Gak Tau?
-                  <motion.svg 
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ delay: 1, duration: 1 }}
-                    className="absolute -bottom-4 left-0 w-full h-4 text-vibe-accent/30" viewBox="0 0 100 10" preserveAspectRatio="none"
-                  >
-                    <path d="M0 5 Q 25 0 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="12" strokeLinecap="round" />
-                  </motion.svg>
-                </span>
-              </motion.h1>
-              
-              <div className="absolute -top-10 -right-4 hidden lg:block">
-                 <motion.div 
-                   animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
-                   transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                   className="bg-vibe-card p-4 rounded-3xl shadow-2xl border border-vibe-glow flex items-center gap-3 rotate-6"
-                 >
-                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-500">
-                       <Utensils size={18} />
-                    </div>
-                    <div className="text-left">
-                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Trending</p>
-                       <p className="text-xs font-bold text-vibe-text">Soto Ayam Aesthetic</p>
-                    </div>
-                 </motion.div>
+              <div className="hidden sm:block">
+                <h1 className="text-xl font-black tracking-tighter leading-none">MAKANMANA</h1>
+                <span className="text-[10px] font-bold text-brand-blue tracking-[0.3em] uppercase">Decision Engine</span>
               </div>
             </div>
 
-            <motion.p 
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-xl md:text-2xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed dark:text-slate-400 mt-8"
-            >
-              Hentikan perdebatan tak berujung. AI kami menganalisis cuaca, budget, dan mood kamu untuk satu keputusan mutlak.
-            </motion.p>
-          </motion.div>
-        )}
-
-        <div className="w-full max-w-6xl space-y-12">
-          
-          {/* Category Selection Area - High Density Bento Grid */}
-          {!category && options.length === 0 && (
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="grid grid-cols-1 md:grid-cols-12 gap-8 px-4 pb-32"
-            >
-              {/* Makanan Saja - The Big Player */}
-              <motion.button 
-                whileHover={{ scale: 1.01, y: -8 }}
-                whileTap={{ scale: 0.99 }}
-                onClick={() => selectQuickstartCategory('MAKANAN_SAJA')}
-                className="md:col-span-12 lg:col-span-7 h-[420px] relative overflow-hidden rounded-[4rem] group shadow-2xl shadow-vibe-glow/30 border border-white/10"
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80" 
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                  alt="Makanan"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-900/30 to-white/5 opacity-90 transition-opacity group-hover:opacity-100" />
-                
-                <div className="absolute top-8 left-8 flex gap-3">
-                   <div className="bg-white/15 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-white text-[10px] font-black uppercase tracking-widest">
-                      78% Users Pick This
-                   </div>
-                </div>
-
-                <div className="absolute bottom-10 left-10 text-left text-white max-w-sm">
-                  <div className="bg-vibe-accent w-16 h-16 rounded-[2rem] flex items-center justify-center mb-6 shadow-2xl shadow-vibe-accent/40 group-hover:rotate-[360deg] transition-transform duration-700">
-                    <Utensils size={32} />
-                  </div>
-                  <h3 className="text-5xl font-black tracking-tighter uppercase mb-3 leading-none">Makanan Berat</h3>
-                  <p className="text-lg font-medium text-white/60 leading-tight">
-                    "Gak cuma lapar mata, tapi butuh porsi yang nyata."
-                  </p>
-                </div>
-
-                <div className="absolute bottom-10 right-10">
-                   <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white group-hover:bg-vibe-accent group-hover:border-transparent transition-all duration-500">
-                      <ChevronRight size={24} />
-                   </div>
-                </div>
-              </motion.button>
-
-              <div className="md:col-span-12 lg:col-span-5 grid grid-cols-1 gap-8">
-                 {/* Minuman Saja */}
-                 <motion.button 
-                    whileHover={{ scale: 1.02, x: 5 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => selectQuickstartCategory('MINUMAN_SAJA')}
-                    className="h-[200px] relative overflow-hidden rounded-[3.5rem] group shadow-xl shadow-vibe-glow/20 border border-white/10"
-                 >
-                    <img 
-                      src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80" 
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                      alt="Minuman"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-950/90 via-indigo-900/40 to-transparent" />
-                    <div className="absolute inset-0 p-8 flex items-center justify-between text-white">
-                      <div className="flex flex-col text-left">
-                        <div className="bg-white/20 backdrop-blur-md w-12 h-12 rounded-2xl flex items-center justify-center mb-3">
-                          <CloudRain size={24} />
-                        </div>
-                        <h3 className="text-3xl font-black tracking-tighter uppercase"> Haus Banget</h3>
-                      </div>
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 transition-transform">
-                         <ChevronRight size={32} />
-                      </div>
-                    </div>
-                 </motion.button>
-
-                 {/* Keduanya / Combo */}
-                 <motion.button 
-                    whileHover={{ scale: 1.02, x: 5 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => selectQuickstartCategory('KEDUANYA')}
-                    className="h-[190px] relative overflow-hidden rounded-[3.5rem] group shadow-xl shadow-vibe-glow/20 border border-white/10"
-                 >
-                    <img 
-                      src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80" 
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                      alt="Combo"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-vibe-accent/90 via-vibe-accent/40 to-transparent" />
-                    <div className="absolute inset-0 p-8 flex items-center justify-between text-white">
-                      <div className="flex flex-col text-left">
-                         <div className="flex -space-x-4 mb-4">
-                            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-                               <Utensils size={20} />
-                            </div>
-                            <div className="w-12 h-12 rounded-2xl bg-brand-blue/40 backdrop-blur-md flex items-center justify-center border border-white/30">
-                               <CloudRain size={20} />
-                            </div>
-                         </div>
-                         <h3 className="text-3xl font-black tracking-tighter uppercase">Combo Mood</h3>
-                      </div>
-                      <div className="opacity-20 group-hover:opacity-100 transition-opacity">
-                         <Sparkles size={40} className="fill-white" />
-                      </div>
-                    </div>
-                 </motion.button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Category Info if selected */}
-          <AnimatePresence>
-            {category && (
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }} 
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-between bg-vibe-card border border-vibe-glow px-6 py-3 rounded-2xl shadow-sm transition-colors duration-700"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="bg-vibe-accent/10 px-3 py-1 rounded-full text-[10px] font-black text-vibe-accent uppercase tracking-widest">
-                    Mode Aktif
-                  </div>
-                  <span className="text-sm font-bold uppercase tracking-widest text-vibe-text transition-colors duration-700">
-                    {category.replace('_', ' ')}
-                  </span>
-                </div>
+            <div className="flex items-center gap-4">
+              {step !== 'LANDING' && (
                 <button 
-                  onClick={() => { setCategory(null); setOptions([]); setResult(null); }}
-                  className="text-[10px] font-black uppercase text-slate-400 hover:text-red-500 dark:text-slate-500 transition-colors underline underline-offset-4"
+                  onClick={() => setStep('LANDING')}
+                  className="glass-button px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-2"
                 >
-                  Ganti Kategori
+                  <RefreshCcw size={14} /> Reset
                 </button>
-              </motion.div>
-            )}
-           </AnimatePresence>
-           
-           {/* Selection Section Area */}
-          <AnimatePresence mode="wait">
-            {(category || options.length > 0) && !result && (
-              <motion.section 
-                key="selection-area"
-                initial={{ opacity: 0, scale: 0.98, y: 30 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.98, y: -30 }}
-                className="bg-vibe-card/80 backdrop-blur-3xl rounded-[4rem] p-10 md:p-20 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)] border border-white/20 dark:border-white/5 relative group transition-all duration-700"
-              >
-                <div className="absolute -top-6 left-12 md:left-20 bg-vibe-accent text-white px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-[0.25em] flex items-center gap-3 shadow-2xl shadow-vibe-accent/40 transition-all hover:scale-105">
-                  <Sparkles size={16} className="animate-pulse" /> Sempurnakan Keinginanmu
-                </div>
+              )}
+            </div>
+          </nav>
 
-                <div className="space-y-16">
+          <main className="flex-1 flex flex-col px-6 md:px-12 max-w-7xl mx-auto w-full pb-20 pt-10">
+            <AnimatePresence mode="wait">
+              
+              {/* 1. LANDING STEP */}
+              {step === 'LANDING' && (
+                <motion.div
+                  key="landing"
+                  initial={{ opacity: 0, scale: 0.95, y: 30 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 1.05, y: -20 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="flex-1 flex flex-col justify-center items-center text-center py-12"
+                >
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="mb-6 flex items-center gap-3 px-6 py-2 bg-brand-blue/20 backdrop-blur-xl border border-brand-blue/30 rounded-full"
+                  >
+                    <Sparkles size={16} className="text-brand-blue" />
+                    <span className="text-xs font-black uppercase tracking-[0.2em] text-brand-blue">AI-Powered Decisions</span>
+                  </motion.div>
+
+                  <h2 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9] mb-8 text-glow">
+                    BINGUNG <br />
+                    <span className="text-brand-blue">MAKAN MANA?</span>
+                  </h2>
                   
-                  {/* Main Input Area */}
-                  <div className="space-y-8">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
-                      <div className="space-y-2">
-                        <h3 className="text-4xl md:text-5xl font-black tracking-tighter text-vibe-text">Sebutkan <br/> <span className="text-vibe-accent">List Opsimu</span></h3>
-                        <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Minimal masukkan 1 pilihan</p>
+                  <p className="max-w-2xl text-lg md:text-xl text-white/50 mb-12 font-medium leading-relaxed italic">
+                    "Pilih kategori untuk memulai navigasi rasa Anda."
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
+                    <button
+                      onClick={() => { selectQuickstartCategory('MAKANAN_SAJA'); setStep('SELECTION'); }}
+                      className="group relative px-8 py-10 bg-white/5 border border-white/10 rounded-[2.5rem] font-black uppercase tracking-[0.2em] transition-all hover:bg-brand-blue hover:scale-105 active:scale-95 shadow-2xl"
+                    >
+                      <div className="flex flex-col items-center gap-4">
+                        <span className="text-4xl">🍔</span>
+                        <span className="text-sm">Makanan Saja</span>
                       </div>
-                      <MapsIntegration 
-                        onLocationUpdate={setUserLocation}
-                        category={category}
-                        onPlacesFound={(names) => setOptions(prev => Array.from(new Set([...prev, ...names])))} 
-                      />
-                    </div>
+                    </button>
 
-                    <div className="relative group/input">
-                      <input 
-                        type="text" 
-                        value={newOption}
-                        onChange={(e) => setNewOption(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && addOption()}
-                        placeholder="Misal: Sate Padang, Burger King..."
-                        className="w-full bg-vibe-bg border-2 border-vibe-glow/50 focus:bg-vibe-card focus:border-vibe-accent focus:ring-4 focus:ring-vibe-accent/10 px-8 md:px-12 py-7 md:py-10 rounded-[2.5rem] font-black md:text-2xl transition-all text-vibe-text placeholder:text-slate-300 dark:placeholder:text-slate-700 shadow-inner"
-                      />
-                      <button 
-                        onClick={addOption}
-                        className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 bg-vibe-accent text-white w-14 h-14 md:w-20 md:h-20 rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-center hover:bg-slate-900 dark:hover:bg-white dark:hover:text-vibe-accent transition-all duration-500 disabled:opacity-20 shadow-2xl shadow-vibe-accent/30"
-                        disabled={!newOption.trim()}
-                      >
-                        <Plus size={32} />
-                      </button>
-                    </div>
-
-                    <div className="flex flex-wrap gap-3 px-2">
-                      <AnimatePresence mode="popLayout">
-                        {options.map((opt, i) => (
-                          <motion.div 
-                            key={opt + i}
-                            layout
-                            initial={{ opacity: 0, scale: 0.8, x: -10 }}
-                            animate={{ opacity: 1, scale: 1, x: 0 }}
-                            exit={{ opacity: 0, scale: 0.8, x: 10 }}
-                            className="bg-vibe-accent/10 border border-vibe-accent/10 text-vibe-accent px-6 py-3 rounded-2xl font-black text-xs md:text-sm flex items-center gap-3 hover:bg-vibe-accent hover:text-white transition-all group cursor-default shadow-sm"
-                          >
-                            <span>{opt}</span>
-                            <button 
-                              onClick={() => removeOption(i)} 
-                              className="opacity-40 group-hover:opacity-100 hover:rotate-90 transition-all"
-                            >
-                              <X size={16} strokeWidth={3} />
-                            </button>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                      {options.length > 0 && (
-                        <button 
-                          onClick={() => { setOptions([]); setResult(null); }} 
-                          className="px-6 py-3 text-[10px] font-black text-slate-400 hover:text-red-500 transition-colors uppercase tracking-[0.2em]"
-                        >
-                          Reset List
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10">
-                      <div className="space-y-4">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-6 flex items-center gap-2">
-                          <Wallet size={14} className="text-vibe-accent" /> Financial Plan (Rp)
-                        </label>
-                        <div className="relative group/field">
-                          <span className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-700 font-black text-xl">Rp</span>
-                          <input 
-                            type="text" 
-                            value={budget}
-                            onChange={handleBudgetChange}
-                            placeholder="Contoh: 100,000"
-                            className="w-full bg-vibe-bg border-2 border-vibe-glow/50 focus:bg-vibe-card focus:border-vibe-accent px-16 py-7 rounded-[2rem] font-black text-xl md:text-2xl transition-all shadow-sm text-vibe-text"
-                          />
-                        </div>
+                    <button
+                      onClick={() => { selectQuickstartCategory('MINUMAN_SAJA'); setStep('SELECTION'); }}
+                      className="group relative px-8 py-10 bg-white/5 border border-white/10 rounded-[2.5rem] font-black uppercase tracking-[0.2em] transition-all hover:bg-brand-blue hover:scale-105 active:scale-95 shadow-2xl"
+                    >
+                      <div className="flex flex-col items-center gap-4">
+                        <span className="text-4xl">🍹</span>
+                        <span className="text-sm">Minuman Saja</span>
                       </div>
-                      <div className="space-y-4">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-6 flex items-center gap-2">
-                          <Wind size={14} className="text-vibe-accent" /> Mood Context
-                        </label>
-                        <input 
-                          type="text" 
-                          value={context}
-                          onChange={(e) => setContext(e.target.value)}
-                          placeholder="Lagi butuh asupan micin, cepat..."
-                          className="w-full bg-vibe-bg border-2 border-vibe-glow/50 focus:bg-vibe-card focus:border-vibe-accent px-8 py-7 rounded-[2rem] font-black text-xl md:text-2xl transition-all shadow-sm text-vibe-text"
+                    </button>
+
+                    <button
+                      onClick={() => { selectQuickstartCategory('KEDUANYA'); setStep('SELECTION'); }}
+                      className="group relative px-8 py-10 bg-white/5 border border-white/10 rounded-[2.5rem] font-black uppercase tracking-[0.2em] transition-all hover:bg-brand-blue hover:scale-105 active:scale-95 shadow-2xl"
+                    >
+                      <div className="flex flex-col items-center gap-4">
+                        <span className="text-4xl">✨</span>
+                        <span className="text-sm">Mix Keduanya</span>
+                      </div>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* 2. SELECTION STEP */}
+              {step === 'SELECTION' && (
+                <motion.div
+                  key="selection"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+                >
+                  {/* Left: Inputs */}
+                  <div className="lg:col-span-7 space-y-8">
+                    <div className="glass-card rounded-[3rem] p-8 md:p-12">
+                      <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white/40">Daftar Pilihan: <span className="text-brand-blue">{category?.replace('_', ' ')}</span></h3>
+                        <MapsIntegration 
+                          category={category}
+                          onLocationUpdate={setUserLocation} 
+                          onPlacesFound={(places) => setOptions(prev => [...new Set([...prev, ...places])])} 
                         />
                       </div>
+
+                      <div className="flex gap-2 p-2 bg-white/5 border border-white/10 rounded-full mb-8 focus-within:ring-2 ring-brand-blue/30 transition-all">
+                        <input
+                          type="text"
+                          value={newOption}
+                          onChange={(e) => setNewOption(e.target.value)}
+                          onKeyPress={(e) => e.key === 'Enter' && addOption()}
+                          placeholder="Ketik menu atau tempat idaman..."
+                          className="flex-1 bg-transparent px-6 py-3 outline-none text-base font-bold placeholder:text-white/20"
+                        />
+                        <button 
+                          onClick={addOption}
+                          className="bg-brand-blue text-white p-4 rounded-full hover:bg-white hover:text-black transition-all"
+                        >
+                          <Plus size={24} />
+                        </button>
+                      </div>
+
+                      <div className="flex flex-wrap gap-3 mb-10">
+                        <AnimatePresence>
+                          {options.map((opt, i) => (
+                            <motion.div
+                              key={opt}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              className="flex items-center gap-3 px-5 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm font-bold group hover:border-brand-blue/50 transition-colors"
+                            >
+                              <span>{opt}</span>
+                              <button onClick={() => removeOption(i)} className="text-white/20 group-hover:text-red-400 transition-colors">
+                                <X size={16} />
+                              </button>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                        {options.length === 0 && <p className="text-white/20 text-sm font-medium italic">Belum ada pilihan kuliner...</p>}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-white/30 block mb-3 ml-2">Budget (IDR)</label>
+                          <div className="flex items-center gap-4 p-4 glass-button rounded-2xl">
+                            <Wallet size={18} className="text-brand-blue" />
+                            <input type="text" value={budget} onChange={handleBudgetChange} placeholder="Unlimited" className="bg-transparent outline-none font-bold w-full" />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-white/30 block mb-3 ml-2">Cravings / Vibe</label>
+                          <div className="flex items-center gap-4 p-4 glass-button rounded-2xl">
+                            <Wind size={18} className="text-brand-blue" />
+                            <input type="text" value={context} onChange={(e) => setContext(e.target.value)} placeholder="Spicy, cozy..." className="bg-transparent outline-none font-bold w-full" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* FEATURE TOGGLES */}
+                      <div className="space-y-4 mb-8">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Special Filters</label>
+                          <button 
+                            onClick={() => { setIsHealthyMode(false); setIsFastMode(false); setIsInstaMode(false); }}
+                            className="text-[9px] font-bold text-red-400/60 hover:text-red-400 uppercase tracking-[0.2em] transition-colors"
+                          >
+                            Disable All Features
+                          </button>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <button 
+                            onClick={() => setIsInstaMode(!isInstaMode)}
+                            className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isInstaMode ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-white/5 border-white/10 text-white/40'}`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <Camera size={16} />
+                              <span className="text-xs font-bold uppercase tracking-tight">Aesthetic Photo</span>
+                            </div>
+                            <div className={`w-3 h-3 rounded-full shadow-lg ${isInstaMode ? 'bg-green-500 shadow-green-500/50' : 'bg-red-500 shadow-red-500/50'}`} />
+                          </button>
+
+                          <button 
+                            onClick={() => setIsHealthyMode(!isHealthyMode)}
+                            className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isHealthyMode ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-white/5 border-white/10 text-white/40'}`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <Heart size={16} />
+                              <span className="text-xs font-bold uppercase tracking-tight">Healthy Food</span>
+                            </div>
+                            <div className={`w-3 h-3 rounded-full shadow-lg ${isHealthyMode ? 'bg-green-500 shadow-green-500/50' : 'bg-red-500 shadow-red-500/50'}`} />
+                          </button>
+
+                          <button 
+                            onClick={() => setIsFastMode(!isFastMode)}
+                            className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isFastMode ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-white/5 border-white/10 text-white/40'}`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <Sparkles size={16} />
+                              <span className="text-xs font-bold uppercase tracking-tight">Fastfood</span>
+                            </div>
+                            <div className={`w-3 h-3 rounded-full shadow-lg ${isFastMode ? 'bg-green-500 shadow-green-500/50' : 'bg-red-500 shadow-red-500/50'}`} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="pt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-                       {/* Healthy Toggle */}
-                       <motion.button 
-                          whileHover={{ y: -5 }}
-                          onClick={() => setIsHealthyMode(!isHealthyMode)}
-                          className={`p-8 rounded-[2.5rem] border-2 transition-all flex flex-col items-center gap-4 ${isHealthyMode ? 'bg-green-500/10 border-green-500' : 'bg-vibe-bg border-vibe-glow/50 hover:border-vibe-accent/30'}`}
-                       >
-                          <div className={`p-4 rounded-2xl ${isHealthyMode ? 'bg-green-500 text-white' : 'bg-vibe-card text-slate-400'}`}>
-                             <Heart size={24} fill={isHealthyMode ? "currentColor" : "none"} />
-                          </div>
-                          <div className="text-center">
-                             <h4 className={`text-sm font-black uppercase tracking-widest mb-1 ${isHealthyMode ? 'text-green-600' : 'text-vibe-text'}`}>Healthy Switch</h4>
-                             <p className="text-[10px] text-slate-400 font-bold">Tips modifikasi sehat</p>
-                          </div>
-                       </motion.button>
-
-                       {/* Fast Toggle */}
-                       <motion.button 
-                          whileHover={{ y: -5 }}
-                          onClick={() => setIsFastMode(!isFastMode)}
-                          className={`p-8 rounded-[2.5rem] border-2 transition-all flex flex-col items-center gap-4 ${isFastMode ? 'bg-amber-500/10 border-amber-500' : 'bg-vibe-bg border-vibe-glow/50 hover:border-vibe-accent/30'}`}
-                       >
-                          <div className={`p-4 rounded-2xl ${isFastMode ? 'bg-amber-500 text-white' : 'bg-vibe-card text-slate-400'}`}>
-                             <RefreshCcw size={24} className={isFastMode ? "animate-spin-slow" : ""} />
-                          </div>
-                          <div className="text-center">
-                             <h4 className={`text-sm font-black uppercase tracking-widest mb-1 ${isFastMode ? 'text-amber-600' : 'text-vibe-text'}`}>Buru-buru?</h4>
-                             <p className="text-[10px] text-slate-400 font-bold">Fast food priority</p>
-                          </div>
-                       </motion.button>
-
-                       {/* Aesthetic Toggle */}
-                       <motion.button 
-                          whileHover={{ y: -5 }}
-                          onClick={() => setIsInstaMode(!isInstaMode)}
-                          className={`p-8 rounded-[2.5rem] border-2 transition-all flex flex-col items-center gap-4 ${isInstaMode ? 'bg-indigo-500/10 border-indigo-500' : 'bg-vibe-bg border-vibe-glow/50 hover:border-vibe-accent/30'}`}
-                       >
-                          <div className={`p-4 rounded-2xl ${isInstaMode ? 'bg-indigo-500 text-white' : 'bg-vibe-card text-slate-400'}`}>
-                             <Camera size={24} />
-                          </div>
-                          <div className="text-center">
-                             <h4 className={`text-sm font-black uppercase tracking-widest mb-1 ${isInstaMode ? 'text-indigo-600' : 'text-vibe-text'}`}>Insta-Ready</h4>
-                             <p className="text-[10px] text-slate-400 font-bold">Aesthetic spot only</p>
-                          </div>
-                       </motion.button>
-                    </div>
-                  </div>
-
-                  {/* Action Button */}
-                  <div className="pt-6">
-                    <button 
+                    <button
                       onClick={handleDecision}
                       disabled={loading || options.length === 0}
-                      className="w-full py-10 md:py-14 bg-vibe-accent text-white rounded-[3rem] text-2xl md:text-4xl font-black flex items-center justify-center gap-6 shadow-[0_30px_60px_-12px_rgba(37,99,235,0.4)] hover:shadow-[0_40px_80px_-12px_rgba(37,99,235,0.6)] hover:scale-[1.01] active:scale-[0.98] transition-all duration-500 disabled:opacity-40 disabled:cursor-not-allowed group"
+                      className="w-full bg-brand-blue text-white py-8 rounded-[3rem] font-black uppercase tracking-[0.4em] text-sm shadow-3xl shadow-brand-blue/40 hover:bg-white hover:text-black transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed group relative overflow-hidden"
                     >
-                      {loading ? (
-                        <>
-                          <Loader2 className="animate-spin" size={40} />
-                          <span className="tracking-tighter">MENGANALISIS SELERA...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="tracking-tighter">LIHAT KEPUTUSAN MUTLAK</span>
-                          <ChevronRight size={48} className="opacity-30 group-hover:opacity-100 group-hover:translate-x-3 transition-all" />
-                        </>
-                      )}
+                      <span className="relative z-10 flex items-center justify-center gap-4">
+                        {loading ? <Loader2 className="animate-spin" /> : <Sparkles />}
+                        {loading ? 'Synthesizing Taste...' : 'Finalize Decision'}
+                      </span>
                     </button>
-                    <AnimatePresence>
-                      {error && (
-                        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-8 text-center text-xs font-black text-red-500 uppercase tracking-[0.3em]">{error}</motion.p>
-                      )}
-                    </AnimatePresence>
+                    {error && <p className="text-red-500 text-center text-xs font-black uppercase tracking-widest">{error}</p>}
                   </div>
-                </div>
-              </motion.section>
-            )}
-          </AnimatePresence>
-          
-          {/* Result Section */}
-          <AnimatePresence>
-            {result && (
-              <motion.section 
-                initial={{ opacity: 0, scale: 0.98, y: 30 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="space-y-8 pb-32"
-              >
-                <div className="bg-vibe-card rounded-[3rem] overflow-hidden border border-vibe-glow shadow-2xl shadow-vibe-glow/20 transition-all duration-700">
-                  <div className="p-10 md:p-16 text-vibe-text relative">
-                     <div className="absolute top-0 right-0 p-8 opacity-5">
-                        <Sparkles size={120} className="text-vibe-accent" />
-                     </div>
-                     <div className="inline-flex items-center gap-2 bg-vibe-accent text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-12 shadow-lg shadow-vibe-accent/20 transition-colors duration-700">
-                        Hasil Keputusan
-                     </div>
-                     <div className="space-y-10">
-                        <div className="flex items-center gap-2">
-                           <div className="h-px flex-1 bg-vibe-glow" />
-                           <div className="flex items-center gap-2 px-4 py-1.5 bg-vibe-bg rounded-full border border-vibe-glow transition-colors duration-700">
-                              <Sparkles size={12} className="text-vibe-accent fill-vibe-accent" />
-                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Mengapa ini yang terpilih?</span>
-                           </div>
-                           <div className="h-px flex-1 bg-vibe-glow" />
+
+                  {/* Right: Atmosphere Panel */}
+                  <div className="lg:col-span-5 space-y-6">
+                    <div className="glass-card rounded-[3rem] p-10 text-center relative overflow-hidden h-full flex flex-col justify-center">
+                      <div className="absolute top-0 right-0 w-64 h-64 bg-brand-blue/10 rounded-full -mr-32 -mt-32 blur-[100px]" />
+                      <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] block mb-8">Atmosphere Meta</span>
+                      
+                      <div className="space-y-12">
+                        <div>
+                          <div className="bg-white/5 w-20 h-20 rounded-3xl mx-auto mb-4 flex items-center justify-center border border-white/10">
+                            <Thermometer className="text-orange-400" size={32} />
+                          </div>
+                          <h4 className="text-4xl font-black mb-1">{temperature}°C</h4>
+                          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest italic">Local Temp</span>
                         </div>
 
-                        <div className="relative group pl-8">
-                           <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-vibe-accent rounded-full shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-colors duration-700" />
-                           
-                           <div className="space-y-4">
-                              <div className="flex flex-col gap-2">
-                                 {result.urgencyStatus && (
-                                   <div className="flex items-center gap-1.5 bg-vibe-bg w-fit px-2.5 py-1 rounded-md mb-2 border border-vibe-glow transition-colors duration-700">
-                                      <RefreshCcw size={10} className="text-slate-400" />
-                                      <span className="text-[9px] font-black uppercase text-slate-400 tracking-tighter">Status: {result.urgencyStatus}</span>
-                                   </div>
-                                 )}
-                                 <h2 className="text-4xl md:text-7xl font-black tracking-tighter leading-none text-vibe-text break-words transition-colors duration-700">
-                                    {result.name}
-                                 </h2>
-                              </div>
-                              <p className="text-xl md:text-2xl text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl font-bold tracking-tight transition-colors duration-700">
-                                 "{result.reason}"
-                              </p>
-                           </div>
-                        </div>
+                        <div className="w-12 h-0.5 bg-white/10 mx-auto" />
 
-                        {result.healthySwitch && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="ml-8 p-6 bg-green-50/50 dark:bg-green-900/10 border border-green-100/50 dark:border-green-900/20 rounded-[2rem] flex items-start gap-4 group/healthy"
-                          >
-                            <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm text-green-500 group-hover/healthy:scale-110 transition-transform">
-                               <Heart size={20} fill="currentColor" />
-                            </div>
-                            <div className="flex flex-col gap-1">
-                               <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Healthy Switch Tips</span>
-                               <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 leading-relaxed italic">
-                                  {result.healthySwitch}
-                                </p>
-                            </div>
-                          </motion.div>
-                        )}
-
-                        {result.instaVibe && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="ml-8 p-6 bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100/50 dark:border-indigo-900/20 rounded-[2rem] flex items-start gap-4 group/insta"
-                          >
-                            <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl shadow-sm text-indigo-500 group-hover/insta:scale-110 transition-transform">
-                               <Camera size={20} fill="none" />
-                            </div>
-                            <div className="flex flex-col gap-1">
-                               <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Aesthetic Mode Analysis</span>
-                               <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 leading-relaxed italic transition-colors">
-                                  {result.instaVibe}
-                                </p>
-                            </div>
-                          </motion.div>
-                        )}
-                        
-                        <div className="flex flex-wrap gap-3 pt-4 pl-8">
-                           {result.tags.map((tag, i) => (
-                             <motion.div 
-                                key={i}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.3 + (i * 0.1) }}
-                                className="bg-vibe-bg border border-vibe-glow px-4 py-2 rounded-xl flex items-center gap-2 group/pt hover:border-vibe-accent/30 transition-all duration-500"
-                             >
-                                <div className="w-1.5 h-1.5 rounded-full bg-vibe-accent" />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover/pt:text-vibe-accent transition-colors">{tag}</span>
-                             </motion.div>
-                           ))}
+                        <div>
+                          <div className="bg-white/5 w-20 h-20 rounded-3xl mx-auto mb-4 flex items-center justify-center border border-white/10">
+                            {weather.includes('Cerah') ? <Sun className="text-yellow-400" size={32} /> : <CloudRain className="text-brand-blue" size={32} />}
+                          </div>
+                          <h4 className="text-3xl font-black mb-1 px-4">{weather}</h4>
+                          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest italic">Sky Condition</span>
                         </div>
-                     </div>
-                  </div>
-                  <div className="px-10 md:px-16 pb-16 pt-0">
-                    <div className="flex items-center justify-between mb-6">
-                       <div className="flex items-center gap-3">
-                         <div className="w-8 h-8 rounded-full bg-vibe-bg flex items-center justify-center transition-colors">
-                            <MapPin size={14} className="text-vibe-accent" />
-                         </div>
-                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Detail Lokasi Terdekat</h4>
-                       </div>
+                      </div>
                     </div>
-                    <WinnerMap 
-                      winnerName={result.mapsQuery || result.name} 
-                      userLocation={userLocation} 
-                    />
                   </div>
-                </div>
-                
-                <div className="flex justify-center">
-                  <button 
-                    onClick={() => {
-                        window.scrollTo({top: 0, behavior: 'smooth'});
-                        setTimeout(() => {
-                           setCategory(null);
-                           setOptions([]);
-                           setResult(null);
-                        }, 500);
-                    }} 
-                    className="group flex items-center gap-3 bg-vibe-card border border-vibe-glow px-8 py-4 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-500"
-                  >
-                    <History size={18} className="text-slate-400 group-hover:text-vibe-accent group-hover:rotate-[-45deg] transition-all" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-vibe-accent transition-colors">Pilih Kategori Lain</span>
-                  </button>
-                </div>
-              </motion.section>
-            )}
-          </AnimatePresence>
-        </div>
+                </motion.div>
+              )}
 
-        <footer className="w-full max-w-3xl mt-auto pt-10 border-t border-vibe-glow flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-10 transition-colors duration-700">
-          <div>© MakanMana AI 2026 • {theme === 'light' ? 'Energetic Mode' : 'Relaxed Mode'}</div>
-          <div className="flex gap-6">
-            <span className={theme === 'light' ? 'text-vibe-accent' : 'text-indigo-400'}>{theme === 'light' ? 'Vibrant' : 'Ambient'}</span>
-            <span>Minimalist</span>
-            <span>Functional</span>
-          </div>
-        </footer>
+              {/* 3. RESULT STEP */}
+              {step === 'RESULT' && result && (
+                <motion.div
+                  key="result"
+                  initial={{ opacity: 0, scale: 1.1 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="max-w-4xl mx-auto w-full"
+                >
+                  <div className="glass-card rounded-[4rem] p-12 md:p-16 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-brand-blue to-transparent" />
+                    
+                    <button 
+                      onClick={() => setStep('SELECTION')}
+                      className="absolute top-10 right-10 p-4 rounded-full glass-button opacity-50 hover:opacity-100"
+                    >
+                      <X size={24} />
+                    </button>
+
+                    <div className="flex flex-col items-center text-center">
+                      <motion.div 
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className="mb-8"
+                      >
+                        <span className="px-6 py-2 bg-brand-blue/20 text-brand-blue rounded-full text-[10px] font-black uppercase tracking-[0.4em] border border-brand-blue/30 inline-block mb-4">Verdict Delivered</span>
+                        <h2 className="text-6xl md:text-8xl font-black italic tracking-tighter leading-none mb-6">
+                          {result.name}
+                        </h2>
+                        <p className="text-2xl md:text-3xl text-white/60 font-medium italic leading-relaxed px-4">
+                          "{result.reason}"
+                        </p>
+                      </motion.div>
+
+                      <div className="flex flex-wrap justify-center gap-3 mb-12">
+                        {result.tags.map((tag, i) => (
+                          <motion.span 
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 + (i * 0.1) }}
+                            key={tag} 
+                            className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest"
+                          >
+                            {tag}
+                          </motion.span>
+                        ))}
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-12">
+                        {result.healthySwitch && (
+                          <div className="text-left p-8 glass-button rounded-[2.5rem]">
+                            <Sparkles size={24} className="text-emerald-400 mb-4" />
+                            <h5 className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-3 italic">Healthy Switch</h5>
+                            <p className="text-sm font-bold text-white/80 leading-relaxed">{result.healthySwitch}</p>
+                          </div>
+                        )}
+                        {result.instaVibe && (
+                          <div className="text-left p-8 glass-button rounded-[2.5rem]">
+                            <Camera size={24} className="text-indigo-400 mb-4" />
+                            <h5 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-3 italic">Insta-Vibe Tip</h5>
+                            <p className="text-sm font-bold text-white/80 leading-relaxed">{result.instaVibe}</p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="w-full relative rounded-[3rem] overflow-hidden border border-white/10">
+                        <WinnerMap winnerName={result.mapsQuery} userLocation={userLocation} />
+                      </div>
+
+                      <div className="mt-12 flex flex-col sm:flex-row gap-4 w-full">
+                        <a 
+                          href={`https://www.google.com/maps/search/${encodeURIComponent(result.mapsQuery)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 py-7 bg-white text-black rounded-full font-black uppercase text-xs tracking-[0.4em] hover:bg-brand-blue hover:text-white transition-all text-center flex items-center justify-center gap-4 group"
+                        >
+                          Navigate Destination <ChevronRight size={18} className="group-hover:translate-x-2 transition-transform" />
+                        </a>
+                        <button 
+                          onClick={() => setStep('SELECTION')}
+                          className="flex-1 py-7 glass-button rounded-full font-black uppercase text-xs tracking-[0.4em]"
+                        >
+                          Try Again
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+            </AnimatePresence>
+          </main>
+        </div>
       </div>
     </APIProvider>
   );

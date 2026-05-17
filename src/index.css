@@ -27,14 +27,40 @@
   --color-vibe-glow: rgba(129, 140, 248, 0.05);
 }
 
-
 @layer base {
   body {
-    @apply font-sans antialiased bg-slate-50 text-brand-dark;
+    @apply font-sans antialiased bg-black text-white selection:bg-brand-blue/30;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight font-semibold;
+    @apply font-display tracking-tighter font-black;
   }
+}
+
+@layer components {
+  .cinematic-bg {
+    @apply fixed inset-0 z-0 overflow-hidden pointer-events-none;
+  }
+
+  .ken-burns {
+    animation: kenburns 30s ease-in-out infinite alternate;
+  }
+
+  .glass-card {
+    @apply bg-black/40 backdrop-blur-3xl border border-white/10 shadow-2xl;
+  }
+
+  .glass-button {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/15 transition-all duration-300;
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+  }
+}
+
+@keyframes kenburns {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.15) translate(-2%, -1%); }
 }
 
