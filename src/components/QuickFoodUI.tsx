@@ -350,9 +350,20 @@ export default function QuickFoodUI() {
     setStep('RESULT'); // Go to result immediately to show loading there
     
     try {
-      const healthyContext = isOptimizationEnabled ? (isHealthyMode ? "\nCATATAN: Berikan tips Healthy Switch." : "\nCATATAN: Berikan tips modifikasi sehat umum.") : "\nCATATAN: Abaikan Healthy_Switch.";
-      const fastContext = isOptimizationEnabled ? (isFastMode ? "\nURGENSI: Sangat Tinggi." : "\nURGENSI: Berikan estimasi kecepatan.") : "\nURGENSI: Abaikan.";
-      const instaContext = isOptimizationEnabled ? (isInstaMode ? "\nAESTHETIC MODE: Aktif." : "\nAESTHETIC MODE: Berikan tips visual umum.") : "\nAESTHETIC MODE: Mati.";
+      const healthyContext = isOptimizationEnabled 
+        ? (isHealthyMode 
+            ? "\nLOGIKA KEPUTUSAN: Prioritaskan memilih opsi yang paling menyehatkan secara nutrisi (misalnya: pilih Jus Buah murni di atas Kopi Susu/Sodagembira). Berikan tips Healthy Switch yang konkret." 
+            : "\nCATATAN: Berikan tips modifikasi sehat secara umum.") 
+        : "\nCATATAN: Abaikan pertimbangan nutrisi khusus.";
+      
+      const fastContext = isOptimizationEnabled 
+        ? (isFastMode ? "\nURGENSI: Sangat Tinggi, pilih yang tercepat disajikan." : "\nURGENSI: Berikan estimasi kecepatan standar.") 
+        : "";
+        
+      const instaContext = isOptimizationEnabled 
+        ? (isInstaMode ? "\nAESTHETIC MODE: Aktif, pilih yang visualnya paling menarik/Instagrammable." : "\nAESTHETIC MODE: Berikan tips visual umum.") 
+        : "";
+
       const prompt = `Pencarian Langsung: ${finalQuery}\n${budget ? `Budget: Rp ${budget}` : ''}\nSuhu: ${temperature}°C\nWeather: ${weather}\nKATEGORI: KEDUANYA${healthyContext}${fastContext}${instaContext}`;
       
       const response = await ai.models.generateContent({
@@ -413,9 +424,20 @@ export default function QuickFoodUI() {
     setError('');
     
     try {
-      const healthyContext = isOptimizationEnabled ? (isHealthyMode ? "\nCATATAN: Berikan tips Healthy Switch." : "\nCATATAN: Berikan tips modifikasi sehat umum.") : "\nCATATAN: Abaikan Healthy_Switch.";
-      const fastContext = isOptimizationEnabled ? (isFastMode ? "\nURGENSI: Sangat Tinggi." : "\nURGENSI: Berikan estimasi kecepatan.") : "\nURGENSI: Abaikan.";
-      const instaContext = isOptimizationEnabled ? (isInstaMode ? "\nAESTHETIC MODE: Aktif." : "\nAESTHETIC MODE: Berikan tips visual umum.") : "\nAESTHETIC MODE: Mati.";
+      const healthyContext = isOptimizationEnabled 
+        ? (isHealthyMode 
+            ? "\nLOGIKA KEPUTUSAN: WAJIB memilih satu opsi yang paling sehat/bergizi dari daftar pilihan yang diberikan (contoh: Jus Alpukat > Es Teh). Berikan alasan medis/nutrisi singkat di [REASON] dan tips Healthy Switch di [HEALTHY_CARD]." 
+            : "\nCATATAN: Berikan tips modifikasi sehat umum.") 
+        : "\nCATATAN: Abaikan pertimbangan kesehatan khusus.";
+
+      const fastContext = isOptimizationEnabled 
+        ? (isFastMode ? "\nURGENSI: Sangat Tinggi, pilih yang penyajiannya paling cepat." : "\nURGENSI: Berikan estimasi kecepatan.") 
+        : "";
+
+      const instaContext = isOptimizationEnabled 
+        ? (isInstaMode ? "\nAESTHETIC MODE: Aktif, pilih yang paling bagus untuk difoto." : "\nAESTHETIC MODE: Berikan tips visual umum.") 
+        : "";
+
       const prompt = `Pilihan: ${options.join(', ')}\n${budget ? `Budget: Rp ${budget}` : ''}\n${context ? `Konteks: ${context}` : ''}\nSuhu: ${temperature}°C\nWeather: ${weather}\nKATEGORI: ${category || 'KEDUANYA'}${healthyContext}${fastContext}${instaContext}`;
       
       const response = await ai.models.generateContent({
