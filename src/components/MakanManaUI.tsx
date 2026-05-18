@@ -310,16 +310,7 @@ export default function MakanManaUI() {
   const [isFastMode, setIsFastMode] = useState(false);
   const [isInstaMode, setIsInstaMode] = useState(false);
   const [isOptimizationEnabled, setIsOptimizationEnabled] = useState(true);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
 
   useEffect(() => {
     if (!userLocation) return;
@@ -505,52 +496,52 @@ export default function MakanManaUI() {
           {/* BACKGROUND DECORATIONS */}
           <div className="fixed bottom-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
             {/* LEFT CLUSTER */}
-            <motion.img 
-              src="/src/assets/images/cartoon_burger_sticker_1779040184450.png"
-              alt="Burger Decoration"
-              className="absolute bottom-[-10px] left-[-20px] w-48 h-48 md:w-64 md:h-64 object-contain rotate-[-10deg] opacity-30 dark:opacity-10 scale-110"
-              animate={{ 
-                y: [0, -10, 0],
-                rotate: [-10, -5, -10]
-              }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              referrerPolicy="no-referrer"
-            />
-            <motion.img 
-              src="/src/assets/images/cartoon_bubble_tea_sticker_1779040328994.png"
-              alt="Drink Decoration"
-              className="absolute bottom-[20px] left-[100px] w-32 h-32 md:w-48 md:h-48 object-contain rotate-[15deg] opacity-25 dark:opacity-10"
-              animate={{ 
-                y: [0, -15, 0],
-                rotate: [15, 20, 15]
-              }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              referrerPolicy="no-referrer"
-            />
+              <motion.img 
+                src="/src/assets/images/cartoon_burger_sticker_1779040184450.png"
+                alt="Burger Decoration"
+                className="absolute bottom-[-10px] left-[-20px] w-48 h-48 md:w-64 md:h-64 object-contain rotate-[-10deg] opacity-30 scale-110"
+                animate={{ 
+                  y: [0, -10, 0],
+                  rotate: [-10, -5, -10]
+                }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                referrerPolicy="no-referrer"
+              />
+              <motion.img 
+                src="/src/assets/images/cartoon_bubble_tea_sticker_1779040328994.png"
+                alt="Drink Decoration"
+                className="absolute bottom-[20px] left-[100px] w-32 h-32 md:w-48 md:h-48 object-contain rotate-[15deg] opacity-25"
+                animate={{ 
+                  y: [0, -15, 0],
+                  rotate: [15, 20, 15]
+                }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                referrerPolicy="no-referrer"
+              />
 
-            {/* RIGHT CLUSTER */}
-            <motion.img 
-              src="/src/assets/images/cartoon_noodle_sticker_1779040200471.png"
-              alt="Noodle Decoration"
-              className="absolute bottom-[-10px] right-[-20px] w-48 h-48 md:w-64 md:h-64 object-contain rotate-[10deg] opacity-30 dark:opacity-10 scale-110"
-              animate={{ 
-                y: [0, -12, 0],
-                rotate: [10, 15, 10]
-              }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-              referrerPolicy="no-referrer"
-            />
-            <motion.img 
-              src="/src/assets/images/cartoon_fries_sticker_1779040345026.png"
-              alt="Fries Decoration"
-              className="absolute bottom-[40px] right-[110px] w-32 h-32 md:w-48 md:h-48 object-contain rotate-[-15deg] opacity-25 dark:opacity-10"
-              animate={{ 
-                y: [0, -18, 0],
-                rotate: [-15, -10, -15]
-              }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              referrerPolicy="no-referrer"
-            />
+              {/* RIGHT CLUSTER */}
+              <motion.img 
+                src="/src/assets/images/cartoon_noodle_sticker_1779040200471.png"
+                alt="Noodle Decoration"
+                className="absolute bottom-[-10px] right-[-20px] w-48 h-48 md:w-64 md:h-64 object-contain rotate-[10deg] opacity-30 scale-110"
+                animate={{ 
+                  y: [0, -12, 0],
+                  rotate: [10, 15, 10]
+                }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                referrerPolicy="no-referrer"
+              />
+              <motion.img 
+                src="/src/assets/images/cartoon_fries_sticker_1779040345026.png"
+                alt="Fries Decoration"
+                className="absolute bottom-[40px] right-[110px] w-32 h-32 md:w-48 md:h-48 object-contain rotate-[-15deg] opacity-25"
+                animate={{ 
+                  y: [0, -18, 0],
+                  rotate: [-15, -10, -15]
+                }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                referrerPolicy="no-referrer"
+              />
           </div>
 
           {/* TOP NAV */}
@@ -569,14 +560,6 @@ export default function MakanManaUI() {
             </div>
             
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-                className="w-12 h-12 bg-[var(--cartoon-yellow)] cartoon-border rounded-2xl flex items-center justify-center cartoon-shadow-sm hover:scale-110 active:scale-95 transition-all text-[var(--text-main)]"
-                title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
-              >
-                {theme === 'light' ? <Moon size={24} /> : <Sun size={24} className="text-yellow-400" />}
-              </button>
-
       {step !== 'LANDING' ? (
         <button 
           onClick={() => setStep('LANDING')}
@@ -775,7 +758,7 @@ export default function MakanManaUI() {
                         {options.length > 5 && (
                           <button 
                             onClick={() => setIsModalOpen(true)}
-                            className="flex items-center gap-2 px-6 py-3 bg-[var(--cartoon-yellow)] cartoon-border rounded-full text-sm font-heading cartoon-shadow-sm hover:scale-105 transition-transform font-bold text-[#2D2727] dark:text-[#2D2727]"
+                            className="flex items-center gap-2 px-6 py-3 bg-[var(--cartoon-yellow)] cartoon-border rounded-full text-sm font-heading cartoon-shadow-sm hover:scale-105 transition-transform font-bold text-[#2D2727]"
                           >
                             <Plus size={18} /> LIHAT SEMUA ({options.length})
                           </button>
@@ -861,7 +844,7 @@ export default function MakanManaUI() {
                     <motion.div variants={itemVariants} className="cartoon-card bg-[var(--cartoon-orange)] text-white">
                       <div className="flex items-center justify-between mb-6">
                         <span className="text-xs font-heading uppercase">Cek Telemetri</span>
-                        <Sun className={`animate-spin-slow duration-[10s] ${theme === 'light' ? 'text-[var(--cartoon-yellow)]' : 'text-yellow-400'}`} size={24} />
+                        <Sun className={`animate-spin-slow duration-[10s] text-yellow-400`} size={24} />
                       </div>
                       
                       <div className="grid grid-cols-2 gap-4 mb-6">

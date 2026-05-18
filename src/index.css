@@ -41,23 +41,6 @@
   --feature-fast-bg: rgba(225, 195, 115, 0.1);
 }
 
-.dark {
-  --bg-color: #1A120B;
-  --text-main: #F4EBD0;
-  --card-bg: #2B1B17;
-  --border-color: #F4EBD0;
-  --dot-color: rgba(244, 235, 208, 0.05);
-  --pop-shadow: #000000;
-
-  --accent-soft: rgba(225, 195, 115, 0.05);
-  --feature-healthy: #78C2C4;
-  --feature-insta: #D27D6C;
-  --feature-fast: #FFCD94;
-  --feature-healthy-bg: rgba(120, 194, 196, 0.1);
-  --feature-insta-bg: rgba(210, 125, 108, 0.1);
-  --feature-fast-bg: rgba(255, 205, 148, 0.1);
-}
-
 @layer base {
   body {
     background-color: var(--bg-color);
@@ -164,10 +147,6 @@
   .text-pop {
     text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
     transition: text-shadow 0.5s ease-in-out;
-  }
-
-  .dark .text-pop {
-    text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.1);
   }
 }
 
