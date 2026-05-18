@@ -1,6 +1,6 @@
 {
-  "name": "MakanMana AI",
-  "description": "Asisten pengambil keputusan kuliner yang tegas, logis, dan solutif untuk mengakhiri keraguan memilih tempat makan.",
+  "name": "QuickFood",
+  "description": "Asisten pengambil keputusan kuliner yang cepat, logis, dan solutif untuk membantu memilih tempat makan saat itu juga.",
   "requestFramePermissions": ["geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

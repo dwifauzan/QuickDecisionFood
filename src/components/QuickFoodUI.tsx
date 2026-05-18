@@ -15,7 +15,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const GOOGLE_MAPS_KEY = process.env.GOOGLE_MAPS_PLATFORM_KEY || '';
 const hasValidMapsKey = Boolean(GOOGLE_MAPS_KEY) && GOOGLE_MAPS_KEY !== 'YOUR_API_KEY';
 
-const SYSTEM_PROMPT = `Anda adalah "MakanMana AI Engine". Tugas Anda adalah memberikan keputusan kuliner yang diproses ke dalam struktur data yang sangat rapi untuk UI modern.
+const SYSTEM_PROMPT = `Anda adalah "QuickFood AI Engine". Tugas Anda adalah memberikan keputusan kuliner yang diproses ke dalam struktur data yang sangat rapi untuk UI modern.
 
 STRUKTUR OUTPUT (WAJIB KAKU):
 Gunakan format label di bawah ini agar sistem dapat memetakan elemen ke dalam komponen UI secara presisi:
@@ -83,7 +83,7 @@ function WinnerMap({ winnerName, userLocation }: { winnerName: string, userLocat
       <Map
         defaultCenter={userLocation || { lat: -6.2, lng: 106.8 }}
         defaultZoom={13}
-        mapId="makanmana_minimal_map"
+        mapId="quickfood_minimal_map"
         gestureHandling={'greedy'}
         disableDefaultUI={true}
         internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
@@ -183,7 +183,7 @@ function MapsIntegration({ onPlacesFound, onLocationUpdate, category }: {
       <button 
         onClick={findNearby}
         disabled={loading || !placesLib}
-        className="cartoon-button bg-[var(--brand-blue)] text-white"
+        className="cartoon-button bg-[var(--brand-blue)] text-white !px-4 !py-2 text-[10px] md:text-sm md:!px-6 md:!py-3"
       >
         {loading ? <RefreshCcw className="animate-spin" size={16} /> : <MapPin size={16} />}
         Auto Cari Sekitar
@@ -284,7 +284,7 @@ const itemVariants = {
   }
 };
 
-export default function MakanManaUI() {
+export default function QuickFoodUI() {
   const [step, setStep] = useState<Step>('LANDING');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [options, setOptions] = useState<string[]>([]);
@@ -493,57 +493,6 @@ export default function MakanManaUI() {
         {/* OVERLAY CONTENT */}
         <div className="relative z-10 flex flex-col min-h-screen">
           
-          {/* BACKGROUND DECORATIONS */}
-          <div className="fixed bottom-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
-            {/* LEFT CLUSTER */}
-              <motion.img 
-                src="/src/assets/images/cartoon_burger_sticker_1779040184450.png"
-                alt="Burger Decoration"
-                className="absolute bottom-[-10px] left-[-20px] w-48 h-48 md:w-64 md:h-64 object-contain rotate-[-10deg] opacity-30 scale-110"
-                animate={{ 
-                  y: [0, -10, 0],
-                  rotate: [-10, -5, -10]
-                }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                referrerPolicy="no-referrer"
-              />
-              <motion.img 
-                src="/src/assets/images/cartoon_bubble_tea_sticker_1779040328994.png"
-                alt="Drink Decoration"
-                className="absolute bottom-[20px] left-[100px] w-32 h-32 md:w-48 md:h-48 object-contain rotate-[15deg] opacity-25"
-                animate={{ 
-                  y: [0, -15, 0],
-                  rotate: [15, 20, 15]
-                }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                referrerPolicy="no-referrer"
-              />
-
-              {/* RIGHT CLUSTER */}
-              <motion.img 
-                src="/src/assets/images/cartoon_noodle_sticker_1779040200471.png"
-                alt="Noodle Decoration"
-                className="absolute bottom-[-10px] right-[-20px] w-48 h-48 md:w-64 md:h-64 object-contain rotate-[10deg] opacity-30 scale-110"
-                animate={{ 
-                  y: [0, -12, 0],
-                  rotate: [10, 15, 10]
-                }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                referrerPolicy="no-referrer"
-              />
-              <motion.img 
-                src="/src/assets/images/cartoon_fries_sticker_1779040345026.png"
-                alt="Fries Decoration"
-                className="absolute bottom-[40px] right-[110px] w-32 h-32 md:w-48 md:h-48 object-contain rotate-[-15deg] opacity-25"
-                animate={{ 
-                  y: [0, -18, 0],
-                  rotate: [-15, -10, -15]
-                }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                referrerPolicy="no-referrer"
-              />
-          </div>
-
           {/* TOP NAV */}
           <nav className="h-16 px-6 md:px-12 flex items-center justify-between pointer-events-auto sticky top-0 z-50">
             <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setStep('LANDING')}>
@@ -551,7 +500,7 @@ export default function MakanManaUI() {
                 <Utensils size={24} className="text-[var(--text-main)]" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-2xl font-heading tracking-tight leading-none text-[var(--text-main)] group-hover:text-[var(--brand-blue)] transition-colors uppercase">MAKAN MANA</h1>
+                <h1 className="text-2xl font-heading tracking-tight leading-none text-[var(--text-main)] group-hover:text-[var(--brand-blue)] transition-colors uppercase">QUICK FOOD</h1>
                 <div className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-blue)] animate-pulse" />
                   <span className="text-[10px] font-black text-[var(--text-main)] tracking-[0.2em] uppercase">Cartoon V3.0</span>
@@ -563,7 +512,7 @@ export default function MakanManaUI() {
       {step !== 'LANDING' ? (
         <button 
           onClick={() => setStep('LANDING')}
-          className="cartoon-button bg-[var(--cartoon-orange)] text-white"
+          className="cartoon-button bg-[var(--cartoon-orange)] text-white !px-3 md:!px-8 !py-1.5 md:!py-3 text-[10px] md:text-base"
         >
           <RefreshCcw size={14} /> RESET
         </button>
@@ -599,20 +548,16 @@ export default function MakanManaUI() {
                     </div>
                   </motion.div>
 
-                  <motion.h2 variants={itemVariants} className="text-6xl md:text-8xl lg:text-9xl font-heading leading-none mb-4 text-[var(--text-main)] uppercase text-pop">
-                    BINGUNG <br />
-                    <span className="text-[var(--brand-blue)]">MAKAN MANA?</span>
+                  <motion.h2 variants={itemVariants} className="text-2xl md:text-6xl lg:text-7xl font-heading leading-[1.1] mb-6 md:mb-12 text-[var(--text-main)] uppercase text-pop max-w-4xl px-2">
+                    BINGUNG PILIHANNYA BANYAK <br />
+                    <span className="text-[var(--brand-blue)]">PAKAI QUICKFOOD AJA</span>
                   </motion.h2>
                   
-                  <motion.p variants={itemVariants} className="max-w-xl text-xl md:text-2xl text-[var(--text-main)] mb-12 font-display bg-[var(--card-bg)]/50 backdrop-blur-sm p-4 rounded-3xl border-2 border-dashed border-[var(--border-color)]">
-                    Pilih kategori atau cari menu favoritmu di bawah!
-                  </motion.p>
-
                   {/* GLOBAL SEARCH BAR */}
                   <motion.div variants={itemVariants} className="w-full max-w-xl mb-16 px-4">
                     <div className="relative group/search">
-                      <div className="relative flex items-center bg-[var(--card-bg)] cartoon-border rounded-3xl p-2 transition-all cartoon-shadow-lg">
-                        <div className="pl-4 text-[var(--text-main)]">
+                      <div className="relative flex items-center bg-[var(--card-bg)] cartoon-border rounded-3xl p-1.5 md:p-2 transition-all cartoon-shadow-lg">
+                        <div className="hidden sm:flex pl-4 text-[var(--text-main)]">
                           <Search size={22} />
                         </div>
                         <input
@@ -621,19 +566,22 @@ export default function MakanManaUI() {
                           onChange={(e) => setSearchQuery(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && handleDirectSearch()}
                           placeholder="Cari makanan (mis: Bakso)..."
-                          className="flex-1 bg-transparent px-4 py-4 outline-none text-xl font-display placeholder:text-[var(--text-main)]/40"
+                          className="flex-1 bg-transparent px-3 md:px-4 py-3 md:py-4 outline-none text-base md:text-xl font-display placeholder:text-[var(--text-main)]/40 min-w-0"
                         />
                         <button
                           onClick={() => handleDirectSearch()}
-                          className="cartoon-button bg-[var(--brand-blue)] text-white mr-2"
+                          className="cartoon-button bg-[var(--brand-blue)] text-white mr-1 md:mr-2 !px-4 md:!px-8 !py-2 md:!py-4 text-xs md:text-base"
                         >
                           CARI
                         </button>
                       </div>
+                      <motion.p variants={itemVariants} className="mt-4 text-[10px] font-heading opacity-50 uppercase tracking-[0.2em] text-center text-[var(--text-main)]">
+                        * cari tahu lokasi makanan yang kamu mau ada dimana
+                      </motion.p>
                     </div>
                   </motion.div>
 
-                  <motion.div variants={containerVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-5xl px-4 mt-8">
+                  <motion.div variants={containerVariants} className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-8 w-full max-w-5xl px-4 mt-8">
                     {[
                       { id: 'MAKANAN_SAJA', label: 'Makanan', icon: Pizza, color: 'var(--brand-blue)', subtitle: 'Pilih Lauk' },
                       { id: 'MINUMAN_SAJA', label: 'Minuman', icon: Coffee, color: 'var(--brand-blue)', subtitle: 'Haus Pol' },
@@ -643,7 +591,7 @@ export default function MakanManaUI() {
                         key={cat.id}
                         variants={itemVariants}
                         onClick={() => { selectQuickstartCategory(cat.id as any); setStep('SELECTION'); }}
-                        className="group relative p-10 rounded-[3rem] cartoon-border cartoon-shadow-lg transition-all hover:scale-105 active:scale-95 flex flex-col items-center gap-6 w-full bg-[var(--brand-blue)] text-white overflow-hidden"
+                        className={`group relative p-4 md:p-10 rounded-[1.5rem] md:rounded-[3rem] cartoon-border cartoon-shadow-lg transition-all hover:scale-105 active:scale-95 flex flex-col items-center gap-3 md:gap-6 w-full bg-[var(--brand-blue)] text-white overflow-hidden ${cat.id === 'KEDUANYA' ? 'col-span-2 sm:col-span-1' : ''}`}
                       >
                         {/* SHINE/GLARE EFFECT */}
                         <div className="absolute top-[-100%] left-[-100%] w-[300%] h-[300%] bg-gradient-to-tr from-transparent via-[var(--bg-color)]/10 to-transparent rotate-[35deg] translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000 pointer-events-none" />
@@ -651,10 +599,10 @@ export default function MakanManaUI() {
                         {/* ICON CLUSTER */}
                         <div className="relative">
                           <motion.div 
-                            className="w-24 h-24 bg-[var(--cartoon-yellow)] cartoon-border rounded-[2.5rem] flex items-center justify-center text-[var(--text-main)] cartoon-shadow-sm relative z-10 group-hover:rotate-[15deg] transition-all duration-500"
+                            className="w-12 h-12 md:w-24 md:h-24 bg-[var(--cartoon-yellow)] cartoon-border rounded-[1rem] md:rounded-[2.5rem] flex items-center justify-center text-[var(--text-main)] cartoon-shadow-sm relative z-10 group-hover:rotate-[15deg] transition-all duration-500"
                             whileHover={{ y: -5 }}
                           >
-                            <cat.icon size={44} className="group-hover:scale-110 transition-transform" />
+                            <cat.icon size={24} className="md:size-[44px] group-hover:scale-110 transition-transform" />
                           </motion.div>
                           
                           {/* FLOATING DECORATIONS */}
@@ -665,8 +613,8 @@ export default function MakanManaUI() {
 
                         {/* TEXT STACK */}
                         <div className="flex flex-col items-center gap-1">
-                          <span className="text-2xl font-heading uppercase text-pop tracking-tight leading-none text-white">{cat.label}</span>
-                          <span className="text-[10px] font-black uppercase opacity-60 tracking-[0.2em] text-white">{cat.subtitle}</span>
+                          <span className="text-lg md:text-2xl font-heading uppercase text-pop tracking-tight leading-none text-white">{cat.label}</span>
+                          <span className="text-[8px] md:text-[10px] font-black uppercase opacity-60 tracking-[0.2em] text-white">{cat.subtitle}</span>
                         </div>
 
                         {/* DECORATIVE BAR */}
@@ -695,74 +643,82 @@ export default function MakanManaUI() {
                   className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative pb-10"
                 >
                   {/* Left: Inputs */}
-                  <motion.div variants={itemVariants} className="lg:col-span-8 space-y-8">
-                    <div className="cartoon-card bg-[var(--bg-color)]">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+                  <motion.div variants={itemVariants} className="lg:col-span-8 space-y-6 md:space-y-8">
+                    <div className="cartoon-card bg-[var(--bg-color)] !p-5 md:!p-10">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 md:mb-8 gap-4">
                         <motion.div variants={itemVariants}>
-                          <div className="bg-[var(--cartoon-orange)] cartoon-border px-6 py-2 rounded-full cartoon-shadow-sm inline-block rotate-[-1deg] mb-2">
-                             <h3 className="text-[10px] font-heading uppercase text-white">Engine Mode</h3>
+                          <div className="bg-[var(--cartoon-orange)] cartoon-border px-4 md:px-6 py-1.5 md:py-2 rounded-full cartoon-shadow-sm inline-block rotate-[-1deg] mb-2">
+                             <h3 className="text-[9px] md:text-[10px] font-heading uppercase text-white">Engine Mode</h3>
                           </div>
                           <div className="flex items-center gap-3">
-                            <Utensils size={24} className="text-[var(--text-main)]" />
-                            <span className="text-xl font-heading tracking-tight uppercase text-[var(--text-main)]">{category?.replace('_', ' ')}</span>
+                            <Utensils size={20} className="md:size-6 text-[var(--text-main)]" />
+                            <span className="text-lg md:text-xl font-heading tracking-tight uppercase text-[var(--text-main)]">{category?.replace('_', ' ')}</span>
                           </div>
-                        </motion.div>
-                        <motion.div variants={itemVariants}>
-                          <MapsIntegration 
-                            category={category}
-                            onLocationUpdate={setUserLocation} 
-                            onPlacesFound={(places) => setOptions(prev => [...new Set([...prev, ...places])])} 
-                          />
                         </motion.div>
                       </div>
 
-                      <motion.div variants={itemVariants} className="space-y-6">
-                        <label className="text-sm font-heading uppercase ml-2 text-[var(--text-main)] block mb-2">Tulis Menu / Tempat:</label>
-                        <div className="flex gap-4 p-3 bg-[var(--card-bg)] cartoon-border rounded-full cartoon-shadow-sm">
+                      <motion.div variants={itemVariants} className="space-y-4 md:space-y-6">
+                        <label className="text-xs md:text-sm font-heading uppercase ml-2 text-[var(--text-main)] block mb-1 md:mb-2">Tulis Menu / Tempat:</label>
+                        <div className="flex gap-2 md:gap-4 p-2 md:p-3 bg-[var(--card-bg)] cartoon-border rounded-2xl md:rounded-full cartoon-shadow-sm">
                           <input
                             type="text"
                             value={newOption}
                             onChange={(e) => setNewOption(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && addOption()}
                             placeholder="Ketik ide kulinermu..."
-                            className="flex-1 bg-transparent px-4 py-3 outline-none text-xl font-display placeholder:text-[var(--text-main)]/40"
+                            className="flex-1 bg-transparent px-3 md:px-4 py-2 md:py-3 outline-none text-base md:text-xl font-display placeholder:text-[var(--text-main)]/40 min-w-0"
                           />
                           <button 
                             onClick={addOption}
-                            className="cartoon-button bg-[var(--cartoon-orange)] text-white p-4"
+                            className="cartoon-button bg-[var(--cartoon-orange)] text-white !p-3 md:!p-4"
                           >
-                            <Plus size={32} />
+                            <Plus size={24} className="md:size-8" />
                           </button>
                         </div>
+                        
+                        <motion.div variants={itemVariants} className="flex justify-start px-2">
+                           <MapsIntegration 
+                            category={category}
+                            onLocationUpdate={setUserLocation} 
+                            onPlacesFound={(places) => setOptions(prev => [...new Set([...prev, ...places])])} 
+                           />
+                        </motion.div>
                       </motion.div>
 
-                      <motion.div variants={itemVariants} className="mt-8 flex flex-wrap gap-3">
-                        <AnimatePresence mode="popLayout">
-                          {options.slice(0, 5).map((opt, i) => (
-                            <motion.div
-                              key={`${opt}-${i}`}
-                              layout
-                              initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
-                              animate={{ opacity: 1, scale: 1, rotate: (i % 2 === 0 ? 1 : -1) }}
-                              exit={{ opacity: 0, scale: 0 }}
-                              className="flex items-center gap-3 px-6 py-3 bg-[var(--card-bg)] cartoon-border rounded-full text-sm font-heading cartoon-shadow-sm group"
-                            >
-                              <span className="max-w-[150px] truncate text-[var(--text-main)]">{opt}</span>
-                              <button onClick={() => removeOption(i)} className="text-[var(--text-main)] hover:text-[var(--brand-blue)] transition-colors">
-                                <X size={18} />
-                              </button>
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
-                        
-                        {options.length > 5 && (
-                          <button 
-                            onClick={() => setIsModalOpen(true)}
-                            className="flex items-center gap-2 px-6 py-3 bg-[var(--cartoon-yellow)] cartoon-border rounded-full text-sm font-heading cartoon-shadow-sm hover:scale-105 transition-transform font-bold text-[#2D2727]"
-                          >
-                            <Plus size={18} /> LIHAT SEMUA ({options.length})
-                          </button>
+                      <motion.div variants={itemVariants} className="mt-6 md:mt-8">
+                        {options.length > 0 && (
+                          <label className="text-[10px] md:text-xs font-heading uppercase ml-2 text-[var(--text-main)] block mb-3 opacity-70">
+                            Makanan yang anda pilih:
+                          </label>
                         )}
+                        <div className="flex flex-wrap gap-2 md:gap-3">
+                          <AnimatePresence mode="popLayout">
+                            {options.slice(0, options.length > 8 ? 6 : options.length).map((opt, i) => (
+                              <motion.div
+                                key={`${opt}-${i}`}
+                                layout
+                                initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+                                animate={{ opacity: 1, scale: 1, rotate: (i % 2 === 0 ? 1 : -1) }}
+                                exit={{ opacity: 0, scale: 0 }}
+                                className="flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 bg-[var(--card-bg)] cartoon-border rounded-full text-[10px] md:text-sm font-heading cartoon-shadow-sm group"
+                              >
+                                <span className="max-w-[120px] md:max-w-[150px] truncate text-[var(--text-main)]">{opt}</span>
+                                <button onClick={() => removeOption(i)} className="text-[var(--text-main)] hover:text-[var(--brand-blue)] transition-colors">
+                                  <X size={14} className="md:size-[18px]" />
+                                </button>
+                              </motion.div>
+                            ))}
+                          </AnimatePresence>
+                          
+                          {options.length > (options.length > 8 ? 6 : options.length) && (
+                            <button 
+                              onClick={() => setIsModalOpen(true)}
+                              className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-[var(--cartoon-yellow)] cartoon-border rounded-full text-[10px] md:text-sm font-heading cartoon-shadow-sm hover:scale-105 transition-transform font-bold text-[#2D2727]"
+                            >
+                              <Plus size={14} /> LIHAT ({options.length})
+                            </button>
+                          )}
+                        </div>
 
                         {options.length === 0 && (
                           <div className="w-full py-12 px-4 border-4 border-dashed border-[var(--border-color)] opacity-30 rounded-3xl text-center bg-[var(--text-main)]/5">
@@ -773,25 +729,25 @@ export default function MakanManaUI() {
                         )}
                       </motion.div>
 
-                      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 p-6 rounded-3xl border-4 border-[var(--border-color)] cartoon-shadow-sm transition-colors duration-500" style={{ backgroundColor: 'var(--accent-soft)' }}>
-                        <div className="space-y-4">
-                          <label className="text-xs font-heading uppercase ml-1 text-[var(--text-main)] block mb-1">Berapa Duit?</label>
-                          <div className="flex items-center gap-4 bg-[var(--card-bg)] cartoon-border p-4 rounded-full cartoon-shadow-sm">
-                            <Wallet size={24} className="text-[var(--text-main)]" />
-                            <input type="text" value={budget} onChange={handleBudgetChange} placeholder="No Limit" className="bg-transparent outline-none font-display text-xl w-full" />
+                      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-8 md:mt-10 p-4 md:p-6 rounded-[2rem] md:rounded-3xl border-4 border-[var(--border-color)] cartoon-shadow-sm transition-colors duration-500" style={{ backgroundColor: 'var(--accent-soft)' }}>
+                        <div className="space-y-2 md:space-y-4">
+                          <label className="text-[10px] md:text-xs font-heading uppercase ml-1 text-[var(--text-main)] block mb-1">Berapa Duit?</label>
+                          <div className="flex items-center gap-3 md:gap-4 bg-[var(--card-bg)] cartoon-border p-3 md:p-4 rounded-full cartoon-shadow-sm">
+                            <Wallet size={20} className="md:size-6 text-[var(--text-main)]" />
+                            <input type="text" value={budget} onChange={handleBudgetChange} placeholder="No Limit" className="bg-transparent outline-none font-display text-base md:text-xl w-full" />
                           </div>
                         </div>
-                        <div className="space-y-4">
-                          <label className="text-xs font-heading uppercase ml-1 text-[var(--text-main)] block mb-1">Ada Vibe Khusus?</label>
-                          <div className="flex items-center gap-4 bg-[var(--card-bg)] cartoon-border p-4 rounded-full cartoon-shadow-sm">
-                            <Wind size={24} className="text-[var(--text-main)]" />
-                            <input type="text" value={context} onChange={(e) => setContext(e.target.value)} placeholder="Pedas, Santai..." className="bg-transparent outline-none font-display text-xl w-full" />
+                        <div className="space-y-2 md:space-y-4">
+                          <label className="text-[10px] md:text-xs font-heading uppercase ml-1 text-[var(--text-main)] block mb-1">Ada Vibe Khusus?</label>
+                          <div className="flex items-center gap-3 md:gap-4 bg-[var(--card-bg)] cartoon-border p-3 md:p-4 rounded-full cartoon-shadow-sm">
+                            <Wind size={20} className="md:size-6 text-[var(--text-main)]" />
+                            <input type="text" value={context} onChange={(e) => setContext(e.target.value)} placeholder="Pedas, Santai..." className="bg-transparent outline-none font-display text-base md:text-xl w-full" />
                           </div>
                         </div>
                       </motion.div>
 
                       {/* FEATURE TOGGLES */}
-                        <motion.div variants={itemVariants} className="mt-10 space-y-6">
+                        <motion.div variants={itemVariants} className="mt-10 space-y-8 md:space-y-6">
                         <div className="flex items-center justify-between px-2">
                           <label className="text-xs font-heading uppercase text-[var(--text-main)] block mb-2">Optimization Engine</label>
                           <div className="flex items-center bg-[var(--card-bg)] cartoon-border-sm rounded-full p-1 cartoon-shadow-sm">
@@ -815,23 +771,23 @@ export default function MakanManaUI() {
                           </div>
                         </div>
                         
-                        <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 transition-all duration-500 ${!isOptimizationEnabled ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+                        <div className={`grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 transition-all duration-500 ${!isOptimizationEnabled ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
                           {[
                             { id: 'insta', active: isInstaMode, set: setIsInstaMode, icon: Camera, label: 'Visual', color: 'var(--brand-blue)', bg: 'var(--accent-soft)' },
                             { id: 'healthy', active: isHealthyMode, set: setIsHealthyMode, icon: Heart, label: 'Healthy', color: 'var(--brand-blue)', bg: 'var(--accent-soft)' },
-                            { id: 'fast', active: isFastMode, set: setIsFastMode, icon: Sparkles, label: 'Fastfood', color: 'var(--brand-blue)', bg: 'var(--accent-soft)' }
+                            { id: 'fast', active: isFastMode, set: setIsFastMode, icon: Sparkles, label: 'Fast', color: 'var(--brand-blue)', bg: 'var(--accent-soft)' }
                           ].map((feat) => (
                             <button 
                               key={feat.id}
                               onClick={() => isOptimizationEnabled && feat.set(!feat.active)}
-                              className={`flex items-center justify-between p-4 cartoon-border rounded-3xl transition-all ${feat.active && isOptimizationEnabled ? 'cartoon-shadow-sm scale-105' : 'bg-[var(--bg-color)] opacity-50'}`}
+                              className={`flex items-center justify-between p-3 md:p-4 cartoon-border rounded-2xl md:rounded-3xl transition-all ${feat.id === 'fast' ? 'col-span-2 sm:col-span-1' : ''} ${feat.active && isOptimizationEnabled ? 'cartoon-shadow-sm scale-105' : 'bg-[var(--bg-color)] opacity-50'}`}
                               style={feat.active && isOptimizationEnabled ? { borderColor: feat.color, color: feat.color, backgroundColor: feat.bg } : {}}
                             >
-                              <div className="flex items-center gap-3">
-                                <feat.icon size={20} />
-                                <span className="font-heading text-sm uppercase">{feat.label}</span>
+                              <div className="flex items-center gap-2 md:gap-3">
+                                <feat.icon size={16} className="md:size-5" />
+                                <span className="font-heading text-[10px] md:text-sm uppercase">{feat.label}</span>
                               </div>
-                              <div className={`w-3 h-3 rounded-full cartoon-border ${feat.active && isOptimizationEnabled ? 'bg-current' : 'bg-transparent'}`} />
+                              <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full cartoon-border ${feat.active && isOptimizationEnabled ? 'bg-current' : 'bg-transparent'}`} />
                             </button>
                           ))}
                         </div>
@@ -849,11 +805,11 @@ export default function MakanManaUI() {
                       
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div className="bg-[var(--card-bg)]/20 p-4 rounded-2xl border-4 border-[var(--card-bg)]/30">
-                          <h4 className="text-4xl font-heading text-pop">{temperature}°</h4>
+                          <h4 className="text-2xl md:text-4xl font-heading text-pop">{temperature}°</h4>
                           <span className="text-[10px] font-heading uppercase">Celcius</span>
                         </div>
                         <div className="bg-[var(--card-bg)]/20 p-4 rounded-2xl border-4 border-[var(--card-bg)]/30 text-right">
-                          <h4 className="text-xl font-heading truncate text-pop">{weather}</h4>
+                          <h4 className="text-base md:text-xl font-heading truncate text-pop">{weather}</h4>
                           <span className="text-[10px] font-heading uppercase">Sky</span>
                         </div>
                       </div>
@@ -863,10 +819,10 @@ export default function MakanManaUI() {
                       <button
                         onClick={handleDecision}
                         disabled={loading || options.length === 0}
-                        className="w-full cartoon-button bg-[var(--brand-blue)] !py-8 text-white !text-2xl cartoon-shadow-lg !rounded-[3rem] shadow-[var(--brand-blue)]/20"
+                        className="w-full cartoon-button bg-[var(--brand-blue)] !py-5 md:!py-8 text-white !text-xl md:!text-2xl cartoon-shadow-lg !rounded-[2rem] md:!rounded-[3rem] shadow-[var(--brand-blue)]/20"
                       >
-                        <span className="flex items-center justify-center gap-4 text-pop">
-                          {loading ? <Loader2 className="animate-spin" size={32} /> : <ChefHat size={32} />}
+                        <span className="flex items-center justify-center gap-3 md:gap-4 text-pop">
+                          {loading ? <Loader2 size={24} className="animate-spin md:size-8" /> : <ChefHat size={24} className="md:size-8" />}
                           {loading ? 'MEMASAK...' : 'GASKEUN!'}
                         </span>
                       </button>
@@ -892,34 +848,34 @@ export default function MakanManaUI() {
                   exit={{ opacity: 0, scale: 2, rotate: 20 }}
                   className="max-w-4xl mx-auto w-full pb-10"
                 >
-                    <motion.div variants={itemVariants} className="cartoon-card !p-10 relative bg-[var(--card-bg)] transition-colors duration-500">
+                    <motion.div variants={itemVariants} className="cartoon-card !p-5 md:!p-10 relative bg-[var(--card-bg)] transition-colors duration-500">
                       <button 
                         onClick={() => setStep('SELECTION')}
-                        className="absolute top-4 right-4 w-12 h-12 bg-[var(--brand-blue)] rounded-full cartoon-border flex items-center justify-center text-white cartoon-shadow-sm z-20 hover:scale-110 active:scale-95"
+                        className="absolute top-2 right-2 md:top-4 md:right-4 w-10 h-10 md:w-12 md:h-12 bg-[var(--brand-blue)] rounded-full cartoon-border flex items-center justify-center text-white cartoon-shadow-sm z-20 hover:scale-110 active:scale-95"
                       >
-                        <X size={24} />
+                        <X size={20} className="md:size-6" />
                       </button>
                       
                       <div className="flex flex-col items-center text-center relative z-10">
-                        <motion.div variants={itemVariants} className="mb-8 p-8 bg-[var(--brand-blue)]/5 cartoon-border cartoon-shadow rounded-[3rem] rotate-[-2deg] w-full transition-colors duration-500">
-                          <div className="bg-[var(--brand-blue)] cartoon-border px-6 py-2 rounded-full cartoon-shadow-sm inline-block mb-4 rotate-[1deg]">
-                             <span className="text-[10px] font-heading uppercase text-white tracking-widest">HASIL ANALISIS AI</span>
+                        <motion.div variants={itemVariants} className="mb-6 md:mb-8 p-6 md:p-8 bg-[var(--brand-blue)]/5 cartoon-border cartoon-shadow rounded-[2rem] md:rounded-[3rem] rotate-[-1deg] md:rotate-[-2deg] w-full transition-colors duration-500">
+                          <div className="bg-[var(--brand-blue)] cartoon-border px-4 md:px-6 py-1.5 md:py-2 rounded-full cartoon-shadow-sm inline-block mb-4 rotate-[1deg]">
+                             <span className="text-[9px] md:text-[10px] font-heading uppercase text-white tracking-widest">HASIL ANALISIS AI</span>
                           </div>
-                        <h2 className="text-5xl md:text-7xl lg:text-8xl font-heading text-[var(--text-main)] uppercase text-pop leading-none mt-2">
+                        <h2 className="text-3xl md:text-7xl lg:text-8xl font-heading text-[var(--text-main)] uppercase text-pop leading-tight md:leading-none mt-2">
                           {result.name}
                         </h2>
                         
-                        <div className="mt-8 max-w-2xl mx-auto">
-                          <p className="text-xl md:text-3xl text-[var(--text-main)] font-display mb-8 italic">
+                        <div className="mt-4 md:mt-8 max-w-2xl mx-auto">
+                          <p className="text-lg md:text-3xl text-[var(--text-main)] font-display mb-6 md:mb-8 italic">
                             "{result.reason}"
                           </p>
                         </div>
  
-                        <div className="flex flex-wrap justify-center gap-3">
+                        <div className="flex flex-wrap justify-center gap-2 md:gap-3">
                           {result.tags.map((tag, i) => (
                             <span 
                               key={i} 
-                              className="px-6 py-2 bg-[var(--cartoon-orange)] text-white cartoon-border rounded-full text-xs font-heading uppercase"
+                              className="px-4 md:px-6 py-1.5 md:py-2 bg-[var(--cartoon-orange)] text-white cartoon-border rounded-full text-[10px] md:text-xs font-heading uppercase"
                             >
                               {tag}
                             </span>
@@ -969,18 +925,18 @@ export default function MakanManaUI() {
                         </div>
                       </motion.div>
  
-                      <motion.div variants={itemVariants} className="mt-12 flex flex-col sm:flex-row gap-4 w-full">
+                      <motion.div variants={itemVariants} className="mt-8 md:mt-12 flex flex-col sm:flex-row gap-4 w-full">
                         <a 
                           href={`https://www.google.com/maps/search/${encodeURIComponent(result.mapsQuery)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex-[2] cartoon-button bg-[var(--brand-blue)] text-white !py-8 !text-lg text-pop"
+                          className="flex-[2] cartoon-button bg-[var(--brand-blue)] text-white !py-5 md:!py-8 !text-base md:!text-lg text-pop"
                         >
-                          OTW SEKARANG! <Navigation size={24} />
+                          OTW SEKARANG! <Navigation size={20} className="md:size-6" />
                         </a>
                         <button 
                           onClick={() => setStep('SELECTION')}
-                          className="flex-1 cartoon-button bg-[var(--card-bg)] text-[var(--text-main)] !py-8 !text-lg"
+                          className="flex-1 cartoon-button bg-[var(--card-bg)] text-[var(--text-main)] !py-5 md:!py-8 !text-base md:!text-lg"
                         >
                           GANTI MENU
                         </button>

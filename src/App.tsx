@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import MakanManaUI from './components/MakanManaUI';
+import QuickFoodUI from './components/QuickFoodUI';
 
 export default function App() {
-  return <MakanManaUI />;
+  return <QuickFoodUI />;
 }
 
