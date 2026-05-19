@@ -42,6 +42,6 @@ export function parseAIResponse(text: string, fallbackName: string): ParsedDecis
     mapsQuery: mapsQuery || fallbackName,
     healthySwitch: healthySwitch && healthySwitch.toLowerCase() !== 'n/a' ? healthySwitch : undefined,
     instaVibe: instaVibe && instaVibe.toLowerCase() !== 'n/a' ? instaVibe : undefined,
-    urgencyStatus
+    urgencyStatus: urgencyStatus && urgencyStatus.toLowerCase() !== 'n/a' ? urgencyStatus : undefined
   };
 }

@@ -12,6 +12,12 @@ interface ResultViewProps {
   result: ParsedDecision;
   userLocation: google.maps.LatLngLiteral | null;
   onReset: () => void;
+  optimization: {
+    enabled: boolean;
+    healthy: boolean;
+    fast: boolean;
+    insta: boolean;
+  };
 }
 
 const itemVariants = {
@@ -24,7 +30,12 @@ const itemVariants = {
   }
 };
 
-export function ResultView({ result, userLocation, onReset }: ResultViewProps) {
+export function ResultView({ result, userLocation, onReset, optimization }: ResultViewProps) {
+  const showUrgency = optimization.enabled && optimization.fast && result.urgencyStatus;
+  const showHealthy = optimization.enabled && optimization.healthy && result.healthySwitch;
+  const showInsta = optimization.enabled && optimization.insta && result.instaVibe;
+
+  const activeCardsCount = [showUrgency, showHealthy, showInsta].filter(Boolean).length;
   return (
     <motion.div
       initial="hidden"
@@ -56,37 +67,42 @@ export function ResultView({ result, userLocation, onReset }: ResultViewProps) {
             </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-10">
-            {result.urgencyStatus && (
-              <motion.div variants={itemVariants} className="cartoon-card !p-6 bg-[var(--cartoon-yellow)]/10 flex flex-col items-center border-[var(--cartoon-yellow)]">
-                <div className="w-12 h-12 bg-[var(--cartoon-yellow)] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
-                  <Clock size={24} className="text-[var(--text-main)]" />
-                </div>
-                <span className="text-[9px] font-heading uppercase text-[var(--text-main)] opacity-50 mb-1">Status Kecepatan</span>
-                <span className="text-xs font-black uppercase text-[var(--text-main)]">{result.urgencyStatus}</span>
-              </motion.div>
-            )}
+          {activeCardsCount > 0 && (
+            <div className={`grid grid-cols-1 ${
+              activeCardsCount === 2 ? 'md:grid-cols-2' : 
+              activeCardsCount === 3 ? 'md:grid-cols-3' : ''
+            } gap-6 w-full mb-10`}>
+              {showUrgency && (
+                <motion.div variants={itemVariants} className="cartoon-card !p-6 bg-[var(--cartoon-yellow)]/10 flex flex-col items-center border-[var(--cartoon-yellow)]">
+                  <div className="w-12 h-12 bg-[var(--cartoon-yellow)] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
+                    <Clock size={24} className="text-[var(--text-main)]" />
+                  </div>
+                  <span className="text-[9px] font-heading uppercase text-[var(--text-main)] opacity-50 mb-1">Status Kecepatan</span>
+                  <span className="text-xs font-black uppercase text-[var(--text-main)]">{result.urgencyStatus}</span>
+                </motion.div>
+              )}
 
-            {result.healthySwitch && (
-              <motion.div variants={itemVariants} className="cartoon-card !p-6 bg-[var(--cartoon-green)]/10 flex flex-col items-center border-[var(--cartoon-green)]">
-                <div className="w-12 h-12 bg-[var(--cartoon-green)] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
-                  <Heart size={24} className="text-white" />
-                </div>
-                <span className="text-[9px] font-heading uppercase text-[var(--text-main)] opacity-50 mb-1">Healthy Switch</span>
-                <p className="text-[10px] font-bold text-[var(--text-main)] leading-relaxed">{result.healthySwitch}</p>
-              </motion.div>
-            )}
+              {showHealthy && (
+                <motion.div variants={itemVariants} className="cartoon-card !p-6 bg-[var(--cartoon-green)]/10 flex flex-col items-center border-[var(--cartoon-green)]">
+                  <div className="w-12 h-12 bg-[var(--cartoon-green)] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
+                    <Heart size={24} className="text-white" />
+                  </div>
+                  <span className="text-[9px] font-heading uppercase text-[var(--text-main)] opacity-50 mb-1">Healthy Switch</span>
+                  <p className="text-[10px] font-bold text-[var(--text-main)] leading-relaxed">{result.healthySwitch}</p>
+                </motion.div>
+              )}
 
-            {result.instaVibe && (
-              <motion.div variants={itemVariants} className="cartoon-card !p-6 bg-[var(--cartoon-pink)]/10 flex flex-col items-center border-[var(--cartoon-pink)]">
-                <div className="w-12 h-12 bg-[var(--cartoon-pink)] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
-                  <Camera size={24} className="text-[var(--brand-blue)]" />
-                </div>
-                <span className="text-[9px] font-heading uppercase text-[var(--text-main)] opacity-50 mb-1">Insta Vibe Tips</span>
-                <p className="text-[10px] font-bold text-[var(--text-main)] leading-relaxed">{result.instaVibe}</p>
-              </motion.div>
-            )}
-          </div>
+              {showInsta && (
+                <motion.div variants={itemVariants} className="cartoon-card !p-6 bg-[var(--cartoon-pink)]/10 flex flex-col items-center border-[var(--cartoon-pink)]">
+                  <div className="w-12 h-12 bg-[var(--cartoon-pink)] cartoon-border rounded-xl flex items-center justify-center mb-4 cartoon-shadow-sm">
+                    <Camera size={24} className="text-[var(--brand-blue)]" />
+                  </div>
+                  <span className="text-[9px] font-heading uppercase text-[var(--text-main)] opacity-50 mb-1">Insta Vibe Tips</span>
+                  <p className="text-[10px] font-bold text-[var(--text-main)] leading-relaxed">{result.instaVibe}</p>
+                </motion.div>
+              )}
+            </div>
+          )}
 
           <motion.div variants={itemVariants} className="w-full">
             <div className="flex items-center justify-between mb-4 px-4">

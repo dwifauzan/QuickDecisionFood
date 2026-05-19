@@ -31,10 +31,10 @@ export function MainControls({
       animate="visible"
       className="flex-1 flex flex-col justify-center items-center text-center py-6"
     >
-      <motion.div variants={itemVariants} className="mb-8 rotate-[-2deg] bg-[var(--cartoon-yellow)] cartoon-border p-4 cartoon-shadow-sm rounded-3xl">
+      <motion.div variants={itemVariants} className="mb-6 md:mb-8 rotate-[-2deg] bg-[var(--cartoon-yellow)] cartoon-border p-2 md:p-4 cartoon-shadow-sm rounded-2xl md:rounded-3xl">
         <div className="flex items-center gap-2">
-           <Sparkles size={20} className="text-[var(--text-main)]" />
-           <span className="text-sm font-heading uppercase tracking-widest text-[var(--text-main)]">AI-Powered Decisions!</span>
+           <Sparkles size={16} className="md:size-5 text-[var(--text-main)]" />
+           <span className="text-[10px] md:text-sm font-heading uppercase tracking-widest text-[var(--text-main)]">AI-Powered Decisions!</span>
         </div>
       </motion.div>
 
@@ -44,6 +44,9 @@ export function MainControls({
       </motion.h2>
 
       <motion.div variants={itemVariants} className="w-full max-w-xl mb-16 px-4">
+        <span className="text-[10px] md:text-xs font-heading text-[var(--text-main)] uppercase opacity-60 ml-4 mb-2 block text-left">
+          cari tau lokasi makananmu
+        </span>
         <div className="relative group/search">
           <div className="relative flex items-center bg-[var(--card-bg)] cartoon-border rounded-3xl p-1.5 md:p-2 transition-all cartoon-shadow-lg">
             <div className="hidden sm:flex pl-4 text-[var(--text-main)]"><Search size={22} /></div>

@@ -161,7 +161,17 @@ export default function QuickFoodUI() {
                       <p className="text-xl font-heading text-[var(--text-main)] animate-pulse uppercase tracking-[0.2em]">Quickfood Menghitung...</p>
                     </div>
                   ) : result ? (
-                    <ResultView result={result} userLocation={userLocation} onReset={() => setStep('SELECTION')} />
+                    <ResultView 
+                      result={result} 
+                      userLocation={userLocation} 
+                      onReset={() => setStep('SELECTION')}
+                      optimization={{
+                        enabled: isOptimizationEnabled,
+                        healthy: isHealthyMode,
+                        fast: isFastMode,
+                        insta: isInstaMode
+                      }}
+                    />
                   ) : (
                     <div className="text-center py-20"><p className="text-red-500 font-heading">{error}</p></div>
                   )}

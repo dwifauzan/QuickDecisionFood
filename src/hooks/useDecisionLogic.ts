@@ -47,19 +47,19 @@ export function useDecisionLogic() {
     try {
       const { options, category, budget, context, isHealthy, isFast, isInsta, isOptimizationEnabled } = params;
       
-      const healthyContext = isOptimizationEnabled 
-        ? (isHealthy ? "\nLOGIKA KEPUTUSAN: Prioritaskan opsi sehat. Berikan tips 'Healthy Switch'." : "\nTips sehat umum.") 
-        : "\nAbaikan nutrisi.";
-
-      const fastContext = isOptimizationEnabled && isFast ? "\nURGENSI: Sangat Tinggi." : "";
-      const instaContext = isOptimizationEnabled && isInsta ? "\nAESTHETIC MODE: Aktif." : "";
+      const optimizationInstructions = isOptimizationEnabled ? `
+PENTING: Hanya berikan bagian kartu di bawah ini jika diinstruksikan Ya:
+- [HEALTHY_CARD]: ${isHealthy ? "Ya" : "Hanya jika sangat relevan secara natural, jika tidak tulis N/A"}
+- [URGENCY_STATUS]: ${isFast ? "Ya (Berikan status CEPAT)" : "Hanya jika sangat relevan, jika tidak tulis N/A"}
+- [INSTA_VIBE_CARD]: ${isInsta ? "Ya" : "Hanya jika sangat relevan, jika tidak tulis N/A"}
+` : "\nJANGAN berikan bagian [HEALTHY_CARD], [URGENCY_STATUS], atau [INSTA_VIBE_CARD].";
 
       const prompt = `Pilihan: ${options.join(', ')}
 ${getBudgetPrompt(budget)}
 ${context ? `Konteks: ${context}` : ''}
 ${getWeatherPrompt({ temp: temperature, condition: weather })}
 KATEGORI: ${category || 'KEDUANYA'}
-${healthyContext}${fastContext}${instaContext}`;
+${optimizationInstructions}`;
 
       const aiResponse = await getAIDecision(prompt);
       const parsed = parseAIResponse(aiResponse, options[0] || "Makanan Enak");
