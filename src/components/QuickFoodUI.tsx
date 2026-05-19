@@ -518,7 +518,7 @@ export default function QuickFoodUI() {
             initial={{ opacity: 0, scale: 0.8, rotate: 15 }}
             animate={{ opacity: 1, scale: 1, rotate: 10 }}
             transition={{ duration: 2, ease: "easeOut" }}
-            src="/src/assets/images/cartoon_burger_sticker_1779040184450.png" 
+            src="/src/assets/images/noodle_satay_bg_1779187560508.png" 
             className="absolute -bottom-24 -right-24 w-[35rem] md:w-[50rem] lg:w-[65rem] h-auto" 
             alt=""
             referrerPolicy="no-referrer"
