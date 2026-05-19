@@ -1,0 +1,37 @@
+import React from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+
+interface AlertModalProps {
+  message: string | null;
+  onClose: () => void;
+}
+
+export function AlertModal({ message, onClose }: AlertModalProps) {
+  return (
+    <AnimatePresence>
+      {message && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
+          <motion.div 
+            initial={{ scale: 0.9, y: 20, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.9, y: 20, opacity: 0 }}
+            className="cartoon-card bg-[var(--card-bg)] !p-8 max-w-sm w-full relative z-[111]"
+          >
+            <div className="bg-[var(--cartoon-orange)] cartoon-border px-4 py-1.5 rounded-xl cartoon-shadow-sm inline-block rotate-[-2deg] mb-6">
+               <h4 className="text-[10px] font-heading uppercase text-white tracking-widest">Pemberitahuan</h4>
+            </div>
+            <p className="text-sm md:text-base font-display text-[var(--text-main)] mb-8 leading-relaxed">
+              {message}
+            </p>
+            <button 
+              onClick={onClose}
+              className="cartoon-button bg-[var(--brand-blue)] text-white w-full uppercase font-heading text-sm !py-3"
+            >
+              Siapp!
+            </button>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+}
