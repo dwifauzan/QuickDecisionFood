@@ -512,6 +512,19 @@ export default function QuickFoodUI() {
     <APIProvider apiKey={GOOGLE_MAPS_KEY}>
       <div className="relative min-h-screen w-full overflow-x-hidden font-sans text-[var(--text-main)] transition-colors duration-500 selection:bg-[var(--brand-blue)]/30">
         
+        {/* BACKGROUND DECORATIONS */}
+        <div className="fixed inset-0 pointer-events-none overflow-hidden select-none z-0 opacity-10">
+          <motion.img 
+            initial={{ opacity: 0, scale: 0.8, rotate: 15 }}
+            animate={{ opacity: 1, scale: 1, rotate: 10 }}
+            transition={{ duration: 2, ease: "easeOut" }}
+            src="/src/assets/images/cartoon_burger_sticker_1779040184450.png" 
+            className="absolute -bottom-24 -right-24 w-[35rem] md:w-[50rem] lg:w-[65rem] h-auto" 
+            alt=""
+            referrerPolicy="no-referrer"
+          />
+        </div>
+
         {/* OVERLAY CONTENT */}
         <div className="relative z-10 flex flex-col min-h-screen">
           
