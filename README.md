@@ -1,6 +1,10 @@
 # 🍔 QuickFood: Keputusan Makanan Seru via AI & Google Maps
 
-![QuickFood App Screenshot](./src/assets/images/quickfood_app_screenshot_1779261847635.png)
+### 📸 Gambaran Aplikasi Real
+![Gambaran Aplikasi Real](./src/assets/images/real_app_screenshot_1779262284163.png)
+
+### 🤖 Keputusan Makan Berbasis AI
+![Keputusan Makan Berbasis AI](./src/assets/images/app_screenshot_1779262017869.png)
 
 **QuickFood** adalah aplikasi asisten kuliner interaktif yang dirancang dengan estetika visual **2D Cartoon Pop (Neo-Brutalist)** yang dinamis dan menyenangkan. Aplikasi ini membantu pengguna yang sering bingung memilih makanan dengan memanfaatkan kecerdasan buatan (AI) serta integrasi Google Maps Platform untuk pencarian restoran terdekat secara langsung.
 
