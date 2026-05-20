@@ -70,9 +70,9 @@ export function MapsIntegration({ onPlacesFound, onLocationUpdate, category, set
       <button 
         onClick={findNearby}
         disabled={loading || !placesLib}
-        className="cartoon-button bg-[var(--brand-blue)] text-white !px-4 !py-2 text-[10px] md:text-sm md:!px-6 md:!py-3"
+        className="cartoon-button bg-[var(--brand-blue)] text-white !pl-3 !pr-3 !pt-2 !pb-2 !border-2 md:!border-4 !shadow-[2px_2px_0px_0px_var(--border-color)] md:!shadow-[4px_4px_0px_0px_var(--border-color)] text-[10px] md:text-sm md:!pl-6 md:!pr-6 md:!pt-3 md:!pb-3 !rounded-xl md:!rounded-2xl shrink-0"
       >
-        {loading ? <RefreshCcw className="animate-spin" size={16} /> : <MapPin size={16} />}
+        {loading ? <RefreshCcw size={12} className="animate-spin md:size-4" /> : <MapPin size={12} className="md:size-4" />}
         Auto Cari Sekitar
       </button>
 

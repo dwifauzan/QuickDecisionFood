@@ -132,8 +132,8 @@ export default function QuickFoodUI() {
                         setAlertMessage={setAlertMessage} setOptions={setOptions}
                       />
                       
-                      <div className="mt-12 flex justify-center">
-                        <button onClick={handleDecision} disabled={loading} className="cartoon-button bg-[var(--brand-blue)] text-white !px-12 !py-5 text-xl w-full cartoon-shadow-lg">
+                      <div className="mt-8 md:mt-12 flex justify-center">
+                        <button onClick={handleDecision} disabled={loading} className="cartoon-button bg-[var(--brand-blue)] text-white !px-6 md:!px-12 !py-3.5 md:!py-5 text-sm md:text-xl w-full cartoon-shadow-lg">
                           CEK KEPUTUSAN AI
                         </button>
                       </div>
